@@ -84,6 +84,16 @@
   dependencies:
     redux "^4.0.1"
 
+"@rematch/immer@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@rematch/immer/-/immer-1.1.0.tgz#830cfa90315118e377750652f0b68ea5f686cbff"
+  dependencies:
+    immer "^1.5.0"
+
+"@rematch/updated@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@rematch/updated/-/updated-0.1.5.tgz#fbe4f8b67b6f61111ce488cd0d419c7a01f5a4f2"
+
 "@tarojs/async-await@1.2.16":
   version "1.2.16"
   resolved "https://registry.yarnpkg.com/@tarojs/async-await/-/async-await-1.2.16.tgz#05c014b3d41eee7501498c6030512be2a851d5f1"
@@ -3201,6 +3211,10 @@ ignore@^3.3.3:
 image-size@~0.5.0:
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
+
+immer@^1.5.0:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.12.1.tgz#40c6e5b292c00560836c2993bda3a24379d466f5"
 
 import-cwd@^2.0.0:
   version "2.1.0"

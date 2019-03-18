@@ -1,23 +1,47 @@
 import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 
-import { View, Button, Text } from '@tarojs/components'
-import { AtButton, AtNoticebar, AtSearchBar } from 'taro-ui'
+import { View, Button } from '@tarojs/components'
+import Uploading from '@/components/common/uploading'
+import Footer from '@/components/common/footer'
+import { AtButton, AtNoticebar, AtSearchBar, AtAvatar } from 'taro-ui'
 import './index.less'
 
 
-@connect(({ home }) => ({
-  home
+@connect(({ home, global }) => ({
+  home,
+  global
 }), (dispatch) => ({
-  ...dispatch.home
+  ...dispatch.home,
+  ...dispatch.global
 }))
 class Index extends Component {
   config = {
     navigationBarTitleText: '首页'
   }
 
+  componentWillMount () {
+    // 获取用户信息
+    wx.getSetting({
+     success: res => {
+       if (res.authSetting['scope.userInfo']) {
+         // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+         wx.getUserInfo({
+           success: res => {
+             this.props.dispatchSetGlobalInfo({
+               avatarUrl: res.userInfo.avatarUrl,
+               userInfo: res.userInfo
+             })
+             this.insertUserInfo(res.userInfo)
+           }
+         })
+       }
+     }
+   })
+ }
+
   componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
+    // console.log(this.props, nextProps)
   }
 
   componentWillUnmount () { }
@@ -27,6 +51,10 @@ class Index extends Component {
   componentDidHide () { }
 
   render () {
+    let { global } = this.props
+    if (!global.avatarUrl) {
+      return <Uploading></Uploading>
+    }
     return (
       <View className='index'>
         <AtNoticebar icon='volume-plus' single marquee>这是 NoticeBar 通告栏这是 NoticeBar 通告栏这是 NoticeBar 通告栏这是 NoticeBar 通告栏</AtNoticebar>
@@ -34,10 +62,25 @@ class Index extends Component {
           value={this.state.value}
           onChange={this.onChange.bind(this)}
         />
-        <Button className='add_btn' onClick={() => this.props.dispatchIncrementAsync(1)}>+</Button>
+        <AtAvatar
+          size='small'
+          circle
+          image={global.avatarUrl}
+        ></AtAvatar>
+        <Button
+          onClick={() => {
+            Taro.navigateTo({
+              url: '/pages/create/index?isAdd=true'
+            })
+          }}
+        >跳转create</Button>
+        {/* <Button className='add_btn' onClick={() => this.props.dispatchIncrementAsync(1)}>+</Button>
         <View><Text>{this.props.home}</Text></View>
-        {/* <View><Text onClick={() => this.sum()}>Hello, World</Text></View> */}
         <AtButton type='primary' onClick={() => this.add()}>ADD</AtButton>
+        <AtButton type='primary' onClick={() => this.jenkins()}>build-warehouse-dev</AtButton> */}
+
+
+        <Footer></Footer>
       </View>
     )
   }
@@ -73,6 +116,46 @@ class Index extends Component {
       wx.showToast({
         title,
       })
+    })
+  }
+
+  jenkins () {
+    wx.cloud.callFunction({
+      name: 'jenkins',
+      data: {
+        env: 'warehouse-dev'
+      },
+    }).then(res => console.warn(res))
+  }
+
+  getUserOpenId () {
+    return wx.cloud.callFunction({
+      name: 'login'
+    }).then(res => {
+      return res.result.openid
+    }).catch(err => {
+      return false
+    })
+  }
+
+  async insertUserInfo (data) {
+    let openId = await this.getUserOpenId()
+    const user = wx.cloud.database().collection('user')
+    user.where({
+      _openid: openId
+    }).get({
+      success: (res) => {
+        if (!res.data.length) {
+          user.add({
+            data
+          }).then(addRes => console.warn(addRes))
+        } else {
+          user.update({
+            data,
+          })
+        }
+      },
+      fail: console.error
     })
   }
 }

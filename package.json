@@ -21,6 +21,8 @@
 	"license": "MIT",
 	"dependencies": {
 		"@rematch/core": "^1.1.0",
+		"@rematch/immer": "^1.1.0",
+		"@rematch/updated": "^0.1.5",
 		"@tarojs/async-await": "1.2.16",
 		"@tarojs/components": "1.2.16",
 		"@tarojs/redux": "1.2.16",

@@ -18,7 +18,9 @@ class App extends Component {
 
   config = {
     pages: [
-      'pages/index/index'
+      'pages/index/index',
+      'pages/create/index',
+      'pages/userCenter/index',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -29,7 +31,13 @@ class App extends Component {
   }
 
   componentDidMount () {
-    wx.cloud.init()
+    if (!wx.cloud) {
+      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
+    } else {
+      wx.cloud.init({
+        traceUser: true,
+      })
+    }
   }
 
   componentDidShow () {}
