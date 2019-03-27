@@ -5,44 +5,49 @@ export default class Index extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      current: 0,
+      tabList: [
+        {
+          title: '首页',
+          iconType: 'home',
+          text: 'new',
+          router: '/pages/index/index'
+        },
+        {
+          title: '待办事项',
+          iconType: 'bullet-list',
+          text: 'new',
+          router: '/pages/create/index'
+        },
+        {
+          title: '上传图片',
+          iconType: 'camera',
+          text: 'new'
+        },
+        {
+          title: '我的',
+          iconType: 'user',
+          text: 'new',
+          router: '/pages/userCenter/index'
+        }
+      ]
     }
   }
-  handleClick (tabList, value) {
-    const curTab = tabList[value]
 
+  handleClick (tabList, value) {
+    let { current } = this.props
+    const curTab = tabList[value]
     if (curTab.title === '新增') {
       this.uploadFile()
     } else if (curTab.router) {
-      this.navigateTo(curTab.router)
-    }
-
-    this.setState({
-      current: value
-    })
-  }
-  render () {
-    let { current } = this.state
-
-    let tabList = [
-      {
-        title: '待办事项',
-        iconType: 'bullet-list',
-        text: 'new',
-        router: '/pages/create/index?isAdd=true'
-      },
-      {
-        title: '新增',
-        iconType: 'camera',
-        text: 'new'
-      },
-      {
-        title: '我的',
-        iconType: 'user',
-        text: 'new',
-        router: '/pages/create/index?isAdd=true'
+      if (value !== current) {
+        this.navigateTo(curTab.router)
       }
-    ]
+    }
+  }
+  
+  render () {
+    const { current } = this.props
+    const { tabList } = this.state
     return (
       <AtTabBar
         fixed

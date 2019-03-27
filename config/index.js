@@ -28,13 +28,7 @@ const config = {
     }
   },
   defineConstants: {
-  },
-  copy: {
-    patterns: [
-    ],
-    options: {
-    }
-  },
+  }, // 全局变量设置
   alias: {
     '@': path.resolve(__dirname, '..', 'src'),
     '@/components': path.resolve(__dirname, '..', 'src/components'),

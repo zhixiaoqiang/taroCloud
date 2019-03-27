@@ -62,25 +62,17 @@ class Index extends Component {
           value={this.state.value}
           onChange={this.onChange.bind(this)}
         />
-        <AtAvatar
-          size='small'
-          circle
-          image={global.avatarUrl}
-        ></AtAvatar>
-        <Button
+        <AtButton
+          className='create-plan'
+          type='primary'
           onClick={() => {
             Taro.navigateTo({
               url: '/pages/create/index?isAdd=true'
             })
           }}
-        >跳转create</Button>
-        {/* <Button className='add_btn' onClick={() => this.props.dispatchIncrementAsync(1)}>+</Button>
-        <View><Text>{this.props.home}</Text></View>
-        <AtButton type='primary' onClick={() => this.add()}>ADD</AtButton>
-        <AtButton type='primary' onClick={() => this.jenkins()}>build-warehouse-dev</AtButton> */}
+        >添加计划</AtButton>
 
-
-        <Footer></Footer>
+        <Footer current={0} ></Footer>
       </View>
     )
   }
