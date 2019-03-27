@@ -22,11 +22,11 @@ class Index extends Component {
 
   componentWillMount () {
     // 获取用户信息
-    wx.getSetting({
+    Taro.getSetting({
      success: res => {
        if (res.authSetting['scope.userInfo']) {
          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-         wx.getUserInfo({
+         Taro.getUserInfo({
            success: res => {
              this.props.dispatchSetGlobalInfo({
                avatarUrl: res.userInfo.avatarUrl,
@@ -105,7 +105,7 @@ class Index extends Component {
     }).then(res => {
       console.warn(res.result.result)
       let title = `调用add成功，值为${String(res.result.result)}`
-      wx.showToast({
+      Taro.showToast({
         title,
       })
     })

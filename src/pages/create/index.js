@@ -41,12 +41,6 @@ class Index extends Component {
 
   componentDidHide () { }
 
-  onChange (value) {
-    this.setState({
-      value: value
-    })
-  }
-
   add () {
     const { planProps } = this.state
     wx.cloud.callFunction({
@@ -59,10 +53,38 @@ class Index extends Component {
     }).then(res => {
       console.warn(res.result.result)
       let title = `调用add成功，值为${String(res.result.result)}`
-      wx.showToast({
+      Taro.showToast({
         title,
       })
     })
+  }
+
+  setPlanProps (data = {}) {
+    const planProps = { ...this.state.planProps, ...data }
+    this.setState({
+      planProps
+    })
+  }
+
+  onTimeChange (data) {
+    this.setPlanProps(data)
+  }
+
+  varify (planProps) {
+    if (!planProps.taskName) {
+      Taro.showToast({
+        title: '请填写任务名称'
+      })
+      return false
+    }
+  }
+
+  submit () {
+    const planProps = { ...this.state.planProps }
+    if (!planProps.taskName) return Taro.showToast({
+      title: '请填写任务名称'
+    })
+    this.props.dispatchCreatePlan(planProps)
   }
 
   render () {
@@ -71,43 +93,50 @@ class Index extends Component {
       <View className='create'>
         <AtForm >
         <AtInput
-          title='任务名称'
+          title='计划名称'
           clear
           type='text'
-          placeholder='请输入任务名称'
-          value={this.state.value}
-          onChange={this.handleChange.bind(this)}
+          placeholder='请输入计划名称'
+          value={planProps.taskName}
+          onChange={this.setPlanProps.bind(this)}
         />
         <View>
           <View className='at-input'>
             <Label className='at-input__title' style='display:inline-block'>选择时间</Label>
-            <Picker mode='time' onChange={this.onTimeChange} className='at-input__input'>
+            <Picker mode='time' onChange={this.onTimeChange.bind(this)} className='at-input__input'>
               {planProps.time}
             </Picker>
           </View>
         </View>
         <AtSwitch
-          title='是否长期任务'
-          checked={this.state.value}
-          onChange={this.handleChange}
+          title='是否长期计划'
+          checked={planProps.isLong}
+          onChange={this.setPlanProps.bind(this)}
         />
         <View>
+          <View className='at-input'>
+            <Label className='at-input__title' style='display:inline-block'>选择日期</Label>
+            <Picker mode='date' onChange={this.onTimeChange.bind(this)} className='at-input__input'>
+              {planProps.time}
+            </Picker>
+          </View>
+        </View>
+        {/* <View>
           <Text>选择日期</Text>
             <AtCalendar
               minDate={Date.now()}
               isMultiSelect
               isVertical
             />
-        </View>
+        </View> */}
         <AtTextarea
-          value={this.state.value}
-          onChange={this.handleChange.bind(this)}
+          value={planProps.comment}
+          onChange={this.setPlanProps.bind(this)}
           maxLength={200}
-          placeholder='备注...'
+          placeholder='计划备注...'
         />
       </AtForm>
         <AtButton type='primary' onClick={() => this.submit()}>提交</AtButton>
-        {/* <Footer current={1} ></Footer> */}
       </View>
     )
   }

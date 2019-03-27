@@ -66,17 +66,17 @@ export default class Index extends Component {
 
   // 选择图片并上传
   uploadFile () {
-    wx.chooseImage({
+    Taro.chooseImage({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success(res) {
-        wx.showLoading({
+        Taro.showLoading({
           title: '上传中···',
         })
         const filePath = res.tempFilePaths[0]
         const cloudPath = (new Date().getTime()) + filePath.match(/\.[^.]+?$/)[0]
-        wx.cloud.uploadFile({
+        Taro.cloud.uploadFile({
           cloudPath,
           filePath, // 文件路径
           success: uploadRes => {
@@ -84,13 +84,13 @@ export default class Index extends Component {
           },
           fail: e => {
             console.error('[上传文件] 失败：', e)
-            wx.showToast({
+            Taro.showToast({
               icon: 'none',
               title: '上传失败',
             })
           },
           complete: () => {
-            wx.hideLoading()
+            Taro.hideLoading()
           }
         })
       }
