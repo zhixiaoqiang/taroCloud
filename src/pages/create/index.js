@@ -2,8 +2,9 @@ import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 
 import { View, Text, Picker, Label } from '@tarojs/components'
-import { AtButton, AtForm, AtInput, AtSwitch, AtTextarea, AtCalendar } from 'taro-ui'
-// import FormItem from '@/components/common/formItem'
+import { AtButton, AtForm, AtInput, AtSwitch, AtTextarea } from 'taro-ui'
+import Loading from '@/components/common/loading'
+import Time from '@/utils/time'
 import './index.less'
 
 
@@ -21,14 +22,26 @@ class Index extends Component {
     super(props)
     let curDate = new Date()
     this.state = {
+      pageLoading: false,
       planProps: {
-        time: `${curDate.getHours()}:${curDate.getMinutes()}`
+        time: Time.format(curDate, 'HH:mm'),
+        date: Time.format(curDate, 'YYYY.MM.DD')
       }
     }
   }
 
   componentWillMount () {
-    console.warn(this.$router.params)
+  }
+
+  componentDidMount () {
+    
+    const { id } = this.$router.params
+    if (id) {
+      this.setState({
+        pageLoading: true
+      }, () => this.getPlanDetail(id))
+      
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -41,22 +54,15 @@ class Index extends Component {
 
   componentDidHide () { }
 
-  add () {
-    const { planProps } = this.state
-    wx.cloud.callFunction({
-      name: 'add',
-      // 传给云函数的参数
-      data: {
-        a: 12,
-        b: 19,
-      },
-    }).then(res => {
-      console.warn(res.result.result)
-      let title = `调用add成功，值为${String(res.result.result)}`
-      Taro.showToast({
-        title,
+  getPlanDetail (id) {
+    const success = (res) => {
+        this.setState({
+        planProps: res.result.data,
+        pageLoading: false
       })
-    })
+    }
+
+    this.hendlePlanItem('plans/detail', { id }, success)
   }
 
   setPlanProps (data = {}) {
@@ -66,29 +72,73 @@ class Index extends Component {
     })
   }
 
-  onTimeChange (data) {
-    this.setPlanProps(data)
-  }
-
   varify (planProps) {
-    if (!planProps.taskName) {
+    if (!planProps.planName) {
       Taro.showToast({
         title: '请填写任务名称'
       })
       return false
     }
+    return true
   }
 
   submit () {
-    const planProps = { ...this.state.planProps }
-    if (!planProps.taskName) return Taro.showToast({
-      title: '请填写任务名称'
-    })
-    this.props.dispatchCreatePlan(planProps)
+    let {
+      _id,
+      time,
+      date,
+      isLong,
+      planName,
+      comment
+    } = { ...this.state.planProps }
+    let params = {
+      time,
+      date,
+      isLong,
+      planName,
+      comment
+    }
+    
+    if (!this.varify(params)) return
+
+    const success = () => {
+      Taro.showToast({
+        title: '提交成功'
+      })
+      Taro.navigateBack()
+    }
+    if (_id) {
+      this.hendlePlanItem('plans/update', { ...params, id: _id }, success)
+    } else {
+      params = {
+        ...params,
+        createTime: Time.format(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+        date: isLong ? null : date
+      }
+      this.hendlePlanItem('plans/create', params, success)
+    }
+  }
+
+  hendlePlanItem (url, data, success) {
+    console.warn(data)
+    wx.cloud.callFunction({
+      // 要调用的云函数名称
+      name: "plans",
+      // 传递给云函数的参数
+      data: {
+          $url: url,
+          data
+      }
+    }).then(res => {
+      success && success(res)
+    }).catch(err => console.warn(err))
   }
 
   render () {
-    const { planProps } = this.state
+    const { pageLoading, planProps } = this.state
+    if (pageLoading) {
+      return <Loading />
+    }
     return (
       <View className='create'>
         <AtForm >
@@ -97,13 +147,18 @@ class Index extends Component {
           clear
           type='text'
           placeholder='请输入计划名称'
-          value={planProps.taskName}
-          onChange={this.setPlanProps.bind(this)}
+          value={planProps.planName}
+          onChange={(value) => this.setPlanProps({ planName: value })}
         />
         <View>
           <View className='at-input'>
             <Label className='at-input__title' style='display:inline-block'>选择时间</Label>
-            <Picker mode='time' onChange={this.onTimeChange.bind(this)} className='at-input__input'>
+            <Picker
+              mode='time'
+              onChange={(e) => this.setPlanProps({ time: e.target.value })}
+              className='at-input__input'
+              value={planProps.time}
+            >
               {planProps.time}
             </Picker>
           </View>
@@ -111,32 +166,29 @@ class Index extends Component {
         <AtSwitch
           title='是否长期计划'
           checked={planProps.isLong}
-          onChange={this.setPlanProps.bind(this)}
+          onChange={(value) => this.setPlanProps({ isLong: value })}
         />
-        <View>
+        {!planProps.isLong && <View>
           <View className='at-input'>
             <Label className='at-input__title' style='display:inline-block'>选择日期</Label>
-            <Picker mode='date' onChange={this.onTimeChange.bind(this)} className='at-input__input'>
-              {planProps.time}
+            <Picker
+              mode='date'
+              onChange={(e) => this.setPlanProps({ date: e.target.value })}
+              className='at-input__input'
+              value={planProps.date}
+            >
+              {planProps.date}
             </Picker>
           </View>
-        </View>
-        {/* <View>
-          <Text>选择日期</Text>
-            <AtCalendar
-              minDate={Date.now()}
-              isMultiSelect
-              isVertical
-            />
-        </View> */}
+        </View>}
         <AtTextarea
           value={planProps.comment}
-          onChange={this.setPlanProps.bind(this)}
+          onChange={(e) => this.setPlanProps({ comment: e.target.value })}
           maxLength={200}
           placeholder='计划备注...'
         />
       </AtForm>
-        <AtButton type='primary' onClick={() => this.submit()}>提交</AtButton>
+        <AtButton className='submit-btn' type='primary' onClick={() => this.submit()}>提交</AtButton>
       </View>
     )
   }

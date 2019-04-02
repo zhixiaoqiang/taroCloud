@@ -1,10 +1,12 @@
+/* eslint-disable react/no-unused-state */
 import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 
-import { View, Button } from '@tarojs/components'
-import Uploading from '@/components/common/uploading'
+import { View } from '@tarojs/components'
+import Loading from '@/components/common/loading'
 import Footer from '@/components/common/footer'
-import { AtButton, AtNoticebar, AtSearchBar, AtAvatar } from 'taro-ui'
+import { AtButton, AtNoticebar, AtSearchBar, AtToast, AtCard, AtIcon } from 'taro-ui'
+import Utils from '@/utils'
 import './index.less'
 
 
@@ -33,82 +35,29 @@ class Index extends Component {
                userInfo: res.userInfo
              })
              this.insertUserInfo(res.userInfo)
-           }
+           },
+           fail: err => console.warn(err)
          })
        }
      }
    })
  }
 
+ componentDidMount () {
+ }
+
   componentWillReceiveProps (nextProps) {
     // console.log(this.props, nextProps)
   }
 
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  render () {
-    let { global } = this.props
-    if (!global.avatarUrl) {
-      return <Uploading></Uploading>
-    }
-    return (
-      <View className='index'>
-        <AtNoticebar icon='volume-plus' single marquee>这是 NoticeBar 通告栏这是 NoticeBar 通告栏这是 NoticeBar 通告栏这是 NoticeBar 通告栏</AtNoticebar>
-        <AtSearchBar
-          value={this.state.value}
-          onChange={this.onChange.bind(this)}
-        />
-        <AtButton
-          className='create-plan'
-          type='primary'
-          onClick={() => {
-            Taro.navigateTo({
-              url: '/pages/create/index?isAdd=true'
-            })
-          }}
-        >添加计划</AtButton>
-
-        <Footer current={0} ></Footer>
-      </View>
-    )
+  componentWillUnmount () {
   }
 
-  onChange (value) {
-    this.setState({
-      value: value
-    })
+  componentDidShow () {
+    this.getPlanList()
   }
 
-  sum () {
-    wx.cloud.callFunction({
-      name: 'sum',
-      // 传给云函数的参数
-      data: {
-        a: 12,
-        b: 19,
-      },
-    }).then(res => console.warn(res))
-  }
-
-  add () {
-    wx.cloud.callFunction({
-      name: 'add',
-      // 传给云函数的参数
-      data: {
-        a: 12,
-        b: 19,
-      },
-    }).then(res => {
-      console.warn(res.result.result)
-      let title = `调用add成功，值为${String(res.result.result)}`
-      Taro.showToast({
-        title,
-      })
-    })
+  componentDidHide () {
   }
 
   jenkins () {
@@ -121,9 +70,13 @@ class Index extends Component {
   }
 
   getUserOpenId () {
+    if (this.state.openId) return this.state.openId
     return wx.cloud.callFunction({
       name: 'login'
     }).then(res => {
+      this.setState({
+        openId: res.result.openid
+      })
       return res.result.openid
     }).catch(err => {
       return false
@@ -135,20 +88,95 @@ class Index extends Component {
     const user = wx.cloud.database().collection('user')
     user.where({
       _openid: openId
-    }).get({
-      success: (res) => {
-        if (!res.data.length) {
-          user.add({
-            data
-          }).then(addRes => console.warn(addRes))
-        } else {
-          user.update({
-            data,
-          })
-        }
-      },
-      fail: console.error
     })
+    .get()
+    .then((res) => {
+      if (!res.data.length) {
+        user.add({
+          data
+        }).then(addRes => console.warn(addRes))
+      } else {
+        user.doc(res.data[0]._id).update({
+          data,
+        })
+      }
+    })
+  }
+
+  getPlanList (query = {}) {
+    const success = (res) => {
+      let { data = {}} = res.result || {}
+      this.setState({
+        planList: data.data || []
+      })
+    }
+    this.hendlePlanItem('plans/list', query, success)
+  }
+
+  goPlan (data = {}) {
+    const query = `?${Utils.params(data)}`
+    Taro.navigateTo({
+      url: `/pages/create/index${query}`
+    })
+  }
+
+  hendlePlanItem (url, data, success) {
+    wx.cloud.callFunction({
+      // 要调用的云函数名称
+      name: "plans",
+      // 传递给云函数的参数
+      data: {
+          $url: url,
+          data
+      }
+    }).then(res => {
+      success && success(res)
+    }).catch(err => console.warn(err))
+  }
+
+  render () {
+    const { global } = this.props
+    const { planList } = this.state
+    if (!planList) {
+      return <Loading />
+    }
+    return (
+      <View className='index'>
+        <AtNoticebar icon='volume-plus' single marquee>今天也要开心哦</AtNoticebar>
+        <AtSearchBar
+          value={this.state.searchValue}
+          onChange={(value) => this.setState({ searchValue: value })}
+          onConfirm={() => this.getPlanList({ planName: this.state.searchValue })}
+          onActionClick={() => this.getPlanList({ planName: this.state.searchValue })}
+        />
+        <View className='plans'>
+          {
+            planList.map(item => (
+              <AtCard
+                key={item._id}
+                note={`${item.date || ''} ${item.time}`}
+                extra={item.isLong ? '每日' : item.date}
+                title={item.planName}
+                onClick={() => this.goPlan({ id: item._id })}
+              >
+                {item.comment}
+              </AtCard>
+            ))
+          }
+        </View>
+        <AtIcon
+          value='add'
+          size='20'
+          color='#FFF'
+          className='create-plan'
+          onClick={() => this.goPlan({ isAdd: true })}
+        />
+
+        <Footer current={0} ></Footer>
+        <AtButton className='add-btn' open-type='getUserInfo' onGetuserinfo={(e) => console.warn(e.detail.userInfo)}>获取权限</AtButton>
+        {/* <AtToast isOpened text='{text}' icon='{icon}'></AtToast> */}
+      </View>
+    )
   }
 }
 

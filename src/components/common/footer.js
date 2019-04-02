@@ -36,7 +36,7 @@ export default class Index extends Component {
   handleClick (tabList, value) {
     let { current } = this.props
     const curTab = tabList[value]
-    if (curTab.title === '新增') {
+    if (curTab.title === '上传图片') {
       this.uploadFile()
     } else if (curTab.router) {
       if (value !== current) {

@@ -5941,6 +5941,10 @@ tcb-admin-node@1.4.3:
     lodash.merge "^4.6.1"
     request "^2.87.0"
 
+tcb-router@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/tcb-router/-/tcb-router-1.1.2.tgz#7e5aa1867af08fae51ac039def8fbd03724f72a2"
+
 text-table@^0.2.0, text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"

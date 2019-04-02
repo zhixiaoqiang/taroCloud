@@ -18,8 +18,8 @@ class App extends Component {
 
   config = {
     pages: [
-      'pages/create/index',
       'pages/index/index',
+      'pages/create/index',
       'pages/userCenter/index',
     ],
     window: {

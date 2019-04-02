@@ -47,7 +47,6 @@ export default class UserCenter extends Component {
   }
 
   componentWillMount () {
-    // console.warn(this.$router.params)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -64,7 +63,6 @@ export default class UserCenter extends Component {
     const { global } = this.props
     const { avatarUrl, userInfo } = global
     const { handleList } = this.state
-    console.warn(global)
     return (
       <View className='user-center-container'>
         {/* 头部信息 */}
