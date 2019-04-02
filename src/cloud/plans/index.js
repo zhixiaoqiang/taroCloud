@@ -8,8 +8,8 @@ const TcbRouter = require('tcb-router')
 cloud.init({
   traceUser: true
 })
-
-const plans = cloud.database().collection('plans')
+const db = cloud.database()
+const plans = db.collection('plans')
 const MAX_LIMIT = 100
 /**
  * 这个示例将经自动鉴权过的小程序用户 openid 返回给小程序端
@@ -38,8 +38,14 @@ exports.main = (event, context) => {
       const promise = plans
       .where({
         _openid: OPENID,
-        planName: event.data.planName || undefined
+        planName: event.data.planName ? db.RegExp({
+          regexp: event.data.planName,
+          options: 'i'
+        }) : undefined
       })
+      .orderBy('isLong', 'desc')
+      .orderBy('date', 'asc')
+      .orderBy('time', 'asc')
       .skip(i * MAX_LIMIT)
       .limit(MAX_LIMIT)
       .get()
@@ -50,7 +56,7 @@ exports.main = (event, context) => {
       data: acc.data.concat(cur.data),
       errMsg: acc.errMsg,
     }))
-    // ctx.body 返回数据到小程序端
+
     ctx.body = { code: 0, data: ctx.data};
   })
 
@@ -62,27 +68,27 @@ exports.main = (event, context) => {
       }
     })
 
-    // ctx.body 返回数据到小程序端
+
     ctx.body = '创建成功'
   })
 
   app.router('plans/detail', async (ctx) => {
     ctx.data = await plans
-    .doc(event.id)
+    .doc(event.data.id)
     .get()
 
-    // ctx.body 返回数据到小程序端
+
     ctx.body = ctx.data
   })
 
   app.router('plans/update', async (ctx) => {
     await plans
-    .doc(event.id)
+    .doc(event.data.id)
     .update({
       data: event.data
     })
 
-    // ctx.body 返回数据到小程序端
+
     ctx.body = '更新成功'
   })
 

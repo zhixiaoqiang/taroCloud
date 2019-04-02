@@ -1,7 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
 
-import { View, Text, Picker, Label } from '@tarojs/components'
+import { View, Picker, Label } from '@tarojs/components'
 import { AtButton, AtForm, AtInput, AtSwitch, AtTextarea } from 'taro-ui'
 import Loading from '@/components/common/loading'
 import Time from '@/utils/time'
@@ -34,7 +34,6 @@ class Index extends Component {
   }
 
   componentDidMount () {
-    
     const { id } = this.$router.params
     if (id) {
       this.setState({
@@ -56,7 +55,7 @@ class Index extends Component {
 
   getPlanDetail (id) {
     const success = (res) => {
-        this.setState({
+      this.setState({
         planProps: res.result.data,
         pageLoading: false
       })
@@ -84,7 +83,7 @@ class Index extends Component {
 
   submit () {
     let {
-      _id,
+      _id: id,
       time,
       date,
       isLong,
@@ -94,7 +93,7 @@ class Index extends Component {
     let params = {
       time,
       date,
-      isLong,
+      isLong: isLong || undefined,
       planName,
       comment
     }
@@ -107,8 +106,9 @@ class Index extends Component {
       })
       Taro.navigateBack()
     }
-    if (_id) {
-      this.hendlePlanItem('plans/update', { ...params, id: _id }, success)
+    if (id) {
+      console.warn(id)
+      this.hendlePlanItem('plans/update', { ...params, id }, success)
     } else {
       params = {
         ...params,
@@ -120,7 +120,6 @@ class Index extends Component {
   }
 
   hendlePlanItem (url, data, success) {
-    console.warn(data)
     wx.cloud.callFunction({
       // 要调用的云函数名称
       name: "plans",

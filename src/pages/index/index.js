@@ -25,22 +25,18 @@ class Index extends Component {
   componentWillMount () {
     // 获取用户信息
     Taro.getSetting({
-     success: res => {
-       if (res.authSetting['scope.userInfo']) {
-         // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-         Taro.getUserInfo({
-           success: res => {
-             this.props.dispatchSetGlobalInfo({
-               avatarUrl: res.userInfo.avatarUrl,
-               userInfo: res.userInfo
-             })
-             this.insertUserInfo(res.userInfo)
-           },
-           fail: err => console.warn(err)
-         })
-       }
-     }
-   })
+      success: res => {
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+          Taro.getUserInfo({
+            success: result => {
+              this.saveUserInfo(result.userInfo)
+            },
+            fail: err => console.warn(err)
+          })
+        }
+      }
+    })
  }
 
  componentDidMount () {
@@ -60,13 +56,12 @@ class Index extends Component {
   componentDidHide () {
   }
 
-  jenkins () {
-    wx.cloud.callFunction({
-      name: 'jenkins',
-      data: {
-        env: 'warehouse-dev'
-      },
-    }).then(res => console.warn(res))
+  saveUserInfo (userInfo) {
+    this.props.dispatchSetGlobalInfo({
+      avatarUrl: userInfo.avatarUrl,
+      userInfo: userInfo
+    })
+    this.insertUserInfo(userInfo)
   }
 
   getUserOpenId () {
@@ -142,8 +137,9 @@ class Index extends Component {
     }
     return (
       <View className='index'>
-        <AtNoticebar icon='volume-plus' single marquee>今天也要开心哦</AtNoticebar>
+        <AtNoticebar icon='volume-plus' single marquee>今天也要开心鸭</AtNoticebar>
         <AtSearchBar
+          showActionButton
           value={this.state.searchValue}
           onChange={(value) => this.setState({ searchValue: value })}
           onConfirm={() => this.getPlanList({ planName: this.state.searchValue })}
@@ -164,16 +160,21 @@ class Index extends Component {
             ))
           }
         </View>
-        <AtIcon
-          value='add'
-          size='20'
-          color='#FFF'
-          className='create-plan'
-          onClick={() => this.goPlan({ isAdd: true })}
-        />
-
         <Footer current={0} ></Footer>
-        <AtButton className='add-btn' open-type='getUserInfo' onGetuserinfo={(e) => console.warn(e.detail.userInfo)}>获取权限</AtButton>
+        <AtButton
+          className='create-plan'
+          open-type='getUserInfo'
+          onGetuserinfo={(res) => {
+            this.saveUserInfo(res.detail.userInfo)
+            this.goPlan({ isAdd: true })
+          }}
+        >
+          <AtIcon
+            value='add'
+            size='20'
+            color='#FFF'
+          />
+        </AtButton>
         {/* <AtToast isOpened text='{text}' icon='{icon}'></AtToast> */}
       </View>
     )
