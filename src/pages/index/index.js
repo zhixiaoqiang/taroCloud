@@ -5,7 +5,7 @@ import { connect } from '@tarojs/redux'
 import { View } from '@tarojs/components'
 import Loading from '@/components/common/loading'
 import Footer from '@/components/common/footer'
-import { AtButton, AtNoticebar, AtSearchBar, AtToast, AtCard, AtIcon } from 'taro-ui'
+import { AtButton, AtNoticebar, AtSearchBar, AtCard, AtIcon } from 'taro-ui'
 import Utils from '@/utils'
 import './index.less'
 
@@ -130,7 +130,6 @@ class Index extends Component {
   }
 
   render () {
-    const { global } = this.props
     const { planList } = this.state
     if (!planList) {
       return <Loading />
@@ -175,7 +174,6 @@ class Index extends Component {
             color='#FFF'
           />
         </AtButton>
-        {/* <AtToast isOpened text='{text}' icon='{icon}'></AtToast> */}
       </View>
     )
   }

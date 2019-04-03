@@ -16,7 +16,7 @@ const MAX_LIMIT = 100
  * 
  * event 参数包含小程序端调用传入的 data
  * 
- */ 
+ */
 exports.main = (event, context) => {
   const app = new TcbRouter({ event })
   const { OPENID } = cloud.getWXContext()
