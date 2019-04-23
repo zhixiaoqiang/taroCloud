@@ -17,7 +17,7 @@ const store = init({
   middlewares,
   plugins: [
     immerPlugin(),
-    updatedPlugin() // 在一定的时间段内防止昂贵（频繁）的获取请求
+    updatedPlugin() // 在一定的时间段内防止频繁的获取请求
   ]
 })
 
