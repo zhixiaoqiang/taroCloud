@@ -3,12 +3,13 @@
 
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
-
+const pinyin4js = require("pinyin4js")
 // 初始化 cloud
 cloud.init({
   traceUser: true
 })
 const db = cloud.database()
+const _ = db.command
 const plans = db.collection('plans')
 const MAX_LIMIT = 100
 /**
@@ -36,13 +37,22 @@ exports.main = (event, context) => {
     const tasks = []
     for (let i = 0; i < batchTimes; i++) {
       const promise = plans
-      .where({
-        _openid: OPENID,
-        planName: event.data.planName ? db.RegExp({
-          regexp: event.data.planName,
-          options: 'i'
-        }) : undefined
-      })
+      .where(_.or([
+        {
+          _openid: OPENID,
+          planName: event.data.planName ? db.RegExp({
+            regexp: event.data.planName,
+            options: 'i'
+          }) : undefined
+        },
+        {
+          _openid: OPENID,
+          planNamePinYing: event.data.planName ? db.RegExp({
+            regexp: event.data.planName,
+            options: 'i'
+          }) : undefined
+        }
+      ]))
       .orderBy('isLong', 'desc')
       .orderBy('date', 'asc')
       .orderBy('time', 'asc')
@@ -61,9 +71,11 @@ exports.main = (event, context) => {
   })
 
   app.router('plans/create', async (ctx) => {
+    const planNamePinYing = await pinyin4js.getShortPinyin(event.data.planName)
     await plans.add({
       data: {
         ...event.data,
+        planNamePinYing,
         _openid: OPENID
       }
     })
@@ -82,10 +94,14 @@ exports.main = (event, context) => {
   })
 
   app.router('plans/update', async (ctx) => {
+    const planNamePinYing = await pinyin4js.getShortPinyin(event.data.planName)
     await plans
     .doc(event.data.id)
     .update({
-      data: event.data
+      data: {
+        ...event.data,
+        planNamePinYing
+      }
     })
 
 

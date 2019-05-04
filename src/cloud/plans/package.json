@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "pinyin4js": "^1.3.18",
     "tcb-router": "^1.1.2",
     "wx-server-sdk": "latest"
   }

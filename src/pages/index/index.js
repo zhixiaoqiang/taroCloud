@@ -138,6 +138,7 @@ class Index extends Component {
       <View className='index'>
         <AtNoticebar icon='volume-plus' single marquee>今天也要开心鸭</AtNoticebar>
         <AtSearchBar
+          placeholder='输入计划名称或首字母缩写'
           showActionButton
           value={this.state.searchValue}
           onChange={(value) => this.setState({ searchValue: value })}
