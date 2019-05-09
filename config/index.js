@@ -31,11 +31,11 @@ const config = {
   }, // 全局变量设置
   alias: {
     '@': path.resolve(__dirname, '..', 'src'),
-    '@/components': path.resolve(__dirname, '..', 'src/components'),
-    '@/pages': path.resolve(__dirname, '..', 'src/pages'),
-    '@/models': path.resolve(__dirname, '..', 'src/models'),
-    '@/store': path.resolve(__dirname, '..', 'src/store'),
-    '@/utils': path.resolve(__dirname, '..', 'src/utils')
+    // '@/components': path.resolve(__dirname, '..', 'src/components'),
+    // '@/pages': path.resolve(__dirname, '..', 'src/pages'),
+    // '@/models': path.resolve(__dirname, '..', 'src/models'),
+    // '@/store': path.resolve(__dirname, '..', 'src/store'),
+    // '@/utils': path.resolve(__dirname, '..', 'src/utils')
   },
   copy: {
     patterns: [
