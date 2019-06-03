@@ -37,11 +37,11 @@ const config = {
     // '@/store': path.resolve(__dirname, '..', 'src/store'),
     // '@/utils': path.resolve(__dirname, '..', 'src/utils')
   },
-  copy: {
-    patterns: [
-      { from: 'src/cloud', to: 'dist/cloud/' }, // 将云函数文件拷贝到dist
-    ]
-  },
+  // copy: {
+  //   patterns: [
+  //     { from: 'src/cloud', to: 'dist/cloud/' }, // 将云函数文件拷贝到dist
+  //   ]
+  // },
   weapp: {
     module: {
       postcss: {

@@ -28,6 +28,53 @@ exports.main = (event, context) => {
     await next(); // 执行下一中间件
   })
 
+  app.router('plans/initPY', async (ctx) => {
+    // 先取出集合记录总数
+    const countResult = await plans.count()
+    const total = countResult.total
+    // 计算需分几次取, 云函数上限100条
+    const batchTimes = Math.ceil(total / MAX_LIMIT)
+    const tasks = []
+    for (let i = 0; i < batchTimes; i++) {
+      const promise = plans
+        .skip(i * MAX_LIMIT)
+        .limit(MAX_LIMIT)
+        .get()
+
+      tasks.push(promise)
+    }
+    const result = (await Promise.all(tasks)).reduce((acc, cur) => ({
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }))
+
+
+    const res = result.data.map(async (item) => {
+      let {
+        _id: id,
+        planName,
+      } = { ...item }
+
+      const planNamePinYing = await pinyin4js.getShortPinyin(planName)
+      await plans
+        .doc(id)
+        .update({
+          data: {
+            planNamePinYing
+          }
+        })
+    })
+
+    try {
+      await Promise.all(res)
+      ctx.body = { code: 0, data: '成功' };
+    } catch (error) {
+      ctx.body = { code: 0, data: error };
+    }
+
+
+  })
+
   app.router('plans/list', async (ctx) => {
     // 先取出集合记录总数
     const countResult = await plans.count()
@@ -37,28 +84,28 @@ exports.main = (event, context) => {
     const tasks = []
     for (let i = 0; i < batchTimes; i++) {
       const promise = plans
-      .where(_.or([
-        {
-          _openid: OPENID,
-          planName: event.data.planName ? db.RegExp({
-            regexp: event.data.planName,
-            options: 'i'
-          }) : undefined
-        },
-        {
-          _openid: OPENID,
-          planNamePinYing: event.data.planName ? db.RegExp({
-            regexp: event.data.planName,
-            options: 'i'
-          }) : undefined
-        }
-      ]))
-      .orderBy('isLong', 'desc')
-      .orderBy('date', 'asc')
-      .orderBy('time', 'asc')
-      .skip(i * MAX_LIMIT)
-      .limit(MAX_LIMIT)
-      .get()
+        .where(_.or([
+          {
+            _openid: OPENID,
+            planName: event.data.planName ? db.RegExp({
+              regexp: event.data.planName,
+              options: 'i'
+            }) : undefined
+          },
+          {
+            _openid: OPENID,
+            planNamePinYing: event.data.planName ? db.RegExp({
+              regexp: event.data.planName,
+              options: 'i'
+            }) : undefined
+          }
+        ]))
+        .orderBy('isLong', 'desc')
+        .orderBy('date', 'asc')
+        .orderBy('time', 'asc')
+        .skip(i * MAX_LIMIT)
+        .limit(MAX_LIMIT)
+        .get()
 
       tasks.push(promise)
     }
@@ -67,7 +114,7 @@ exports.main = (event, context) => {
       errMsg: acc.errMsg,
     }))
 
-    ctx.body = { code: 0, data: ctx.data};
+    ctx.body = { code: 0, data: ctx.data };
   })
 
   app.router('plans/create', async (ctx) => {
@@ -86,8 +133,8 @@ exports.main = (event, context) => {
 
   app.router('plans/detail', async (ctx) => {
     ctx.data = await plans
-    .doc(event.data.id)
-    .get()
+      .doc(event.data.id)
+      .get()
 
 
     ctx.body = ctx.data
@@ -96,13 +143,13 @@ exports.main = (event, context) => {
   app.router('plans/update', async (ctx) => {
     const planNamePinYing = await pinyin4js.getShortPinyin(event.data.planName)
     await plans
-    .doc(event.data.id)
-    .update({
-      data: {
-        ...event.data,
-        planNamePinYing
-      }
-    })
+      .doc(event.data.id)
+      .update({
+        data: {
+          ...event.data,
+          planNamePinYing
+        }
+      })
 
 
     ctx.body = '更新成功'

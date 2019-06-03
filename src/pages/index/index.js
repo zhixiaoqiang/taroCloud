@@ -9,7 +9,6 @@ import { AtButton, AtNoticebar, AtSearchBar, AtCard, AtIcon } from 'taro-ui'
 import Utils from '@/utils'
 import './index.less'
 
-
 @connect(({ home, global }) => ({
   home,
   global
@@ -22,7 +21,7 @@ class Index extends Component {
     navigationBarTitleText: '首页'
   }
 
-  componentWillMount () {
+  componentWillMount() {
     // 获取用户信息
     Taro.getSetting({
       success: res => {
@@ -37,26 +36,26 @@ class Index extends Component {
         }
       }
     })
- }
+  }
 
- componentDidMount () {
- }
+  componentDidMount() {
+  }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     // console.log(this.props, nextProps)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
   }
 
-  componentDidShow () {
+  componentDidShow() {
     this.getPlanList()
   }
 
-  componentDidHide () {
+  componentDidHide() {
   }
 
-  saveUserInfo (userInfo) {
+  saveUserInfo(userInfo) {
     this.props.dispatchSetGlobalInfo({
       avatarUrl: userInfo.avatarUrl,
       userInfo: userInfo
@@ -64,7 +63,7 @@ class Index extends Component {
     this.insertUserInfo(userInfo)
   }
 
-  getUserOpenId () {
+  getUserOpenId() {
     if (this.state.openId) return this.state.openId
     return wx.cloud.callFunction({
       name: 'login'
@@ -78,29 +77,29 @@ class Index extends Component {
     })
   }
 
-  async insertUserInfo (data) {
+  async insertUserInfo(data) {
     let openId = await this.getUserOpenId()
     const user = wx.cloud.database().collection('user')
     user.where({
       _openid: openId
     })
-    .get()
-    .then((res) => {
-      if (!res.data.length) {
-        user.add({
-          data
-        }).then(addRes => console.warn(addRes))
-      } else {
-        user.doc(res.data[0]._id).update({
-          data,
-        })
-      }
-    })
+      .get()
+      .then((res) => {
+        if (!res.data.length) {
+          user.add({
+            data
+          }).then(addRes => console.warn(addRes))
+        } else {
+          user.doc(res.data[0]._id).update({
+            data,
+          })
+        }
+      })
   }
 
-  getPlanList (query = {}) {
+  getPlanList(query = {}) {
     const success = (res) => {
-      let { data = {}} = res.result || {}
+      let { data = {} } = res.result || {}
       this.setState({
         planList: data.data || []
       })
@@ -108,28 +107,29 @@ class Index extends Component {
     this.hendlePlanItem('plans/list', query, success)
   }
 
-  goPlan (data = {}) {
+  goPlan(data = {}) {
     const query = `?${Utils.params(data)}`
     Taro.navigateTo({
       url: `/pages/create/index${query}`
     })
   }
 
-  hendlePlanItem (url, data, success) {
+  hendlePlanItem(url, data, success) {
     wx.cloud.callFunction({
       // 要调用的云函数名称
       name: "plans",
       // 传递给云函数的参数
       data: {
-          $url: url,
-          data
+        $url: url,
+        data
       }
+
     }).then(res => {
       success && success(res)
     }).catch(err => console.warn(err))
   }
 
-  render () {
+  render() {
     const { planList } = this.state
     if (!planList) {
       return <Loading />
