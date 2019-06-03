@@ -71,8 +71,6 @@ exports.main = (event, context) => {
     } catch (error) {
       ctx.body = { code: 0, data: error };
     }
-
-
   })
 
   app.router('plans/list', async (ctx) => {
