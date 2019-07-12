@@ -1,5 +1,5 @@
 {
-	"miniprogramRoot": "dist/",
+	"miniprogramRoot": "client/dist/",
 	"cloudfunctionRoot": "cloud/",
 	"projectname": "wxCloud2",
 	"description": "小程序云开发实践",
@@ -8,10 +8,22 @@
 		"urlCheck": true,
 		"es6": false,
 		"postcss": false,
-		"minified": false
+		"minified": false,
+		"newFeature": true,
+		"coverView": true,
+		"autoAudits": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
 	},
 	"compileType": "miniprogram",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
+	"libVersion": "2.7.4",
 	"condition": {}
 }
