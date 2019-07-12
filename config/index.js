@@ -2,7 +2,7 @@
 const path = require("path");
 
 const config = {
-  sourceRoot: "client/src",
+  sourceRoot: "src",
   projectName: "myWXApp",
   date: "2019-3-9",
   designWidth: 750,
