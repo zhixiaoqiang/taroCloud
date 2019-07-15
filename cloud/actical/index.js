@@ -34,7 +34,8 @@ exports.main = (event, context) => {
       lang: "javascript",
       limit: 30,
       offset: 0,
-      period: "day"
+      period: "day",
+      ...event.data
     });
 
     ctx.body = ctx.data;

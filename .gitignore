@@ -12,6 +12,6 @@ $RECYCLE.BIN/
 
 # Node.js
 node_modules/
-cloud/
 
 dist/
+README.md

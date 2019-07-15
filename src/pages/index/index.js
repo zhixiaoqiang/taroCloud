@@ -115,7 +115,7 @@ class Index extends Component {
   }
 
   goPlan(data = {}) {
-    const query = `?${Utils.params(data)}`;
+    const query = `?${Utils.formatQuery(data)}`;
     Taro.navigateTo({
       url: `/pages/create/index${query}`
     });
