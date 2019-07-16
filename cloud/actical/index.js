@@ -41,7 +41,7 @@ exports.main = (event, context) => {
     ctx.body = ctx.data;
   });
 
-  async function aa(item, site) {
+  async function insertFedNew(item, site) {
     const isRepeat = await fednews
       .where({
         messageURL: item.messageURL
@@ -64,7 +64,7 @@ exports.main = (event, context) => {
   app.router("insertFedNews", async ctx => {
     const { site, list = [] } = event.data;
 
-    const tasks = list.map(async item => await aa(item, site));
+    const tasks = list.map(async item => await insertFedNew(item, site));
     try {
       await Promise.all(tasks);
       ctx.body = { success: true, data: "成功" };
