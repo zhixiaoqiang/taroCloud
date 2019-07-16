@@ -1,0 +1,16 @@
+[
+  {
+    "name": "fed-news Add",
+    "value": {
+      "$url": "insertFedNews",
+      "data": {
+        "list": [
+          {
+            "title": "JS"
+          }
+        ],
+        "site": "github"
+      }
+    }
+  }
+]

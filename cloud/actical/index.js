@@ -3,14 +3,14 @@
 
 const cloud = require("wx-server-sdk");
 const TcbRouter = require("tcb-router");
-const { get, post } = require("./request");
+const { post } = require("./request");
 // 初始化 cloud
 cloud.init({
   traceUser: true
 });
-// const db = cloud.database();
+const db = cloud.database();
 // const _ = db.command;
-// const plans = db.collection("plans");
+const fednews = db.collection("fed-news");
 // const MAX_LIMIT = 100;
 /**
  * 这个示例将经自动鉴权过的小程序用户 openid 返回给小程序端
@@ -39,6 +39,38 @@ exports.main = (event, context) => {
     });
 
     ctx.body = ctx.data;
+  });
+
+  async function aa(item, site) {
+    const isRepeat = await fednews
+      .where({
+        messageURL: item.messageURL
+      })
+      .get();
+
+    if (isRepeat.data.length > 0) {
+      return Promise.resolve();
+    }
+
+    return await fednews.add({
+      data: {
+        site,
+        isRepeat,
+        ...item
+      }
+    });
+  }
+
+  app.router("insertFedNews", async ctx => {
+    const { site, list = [] } = event.data;
+
+    const tasks = list.map(async item => await aa(item, site));
+    try {
+      await Promise.all(tasks);
+      ctx.body = { success: true, data: "成功" };
+    } catch (error) {
+      ctx.body = { code: 0, success: false, error: error };
+    }
   });
 
   return app.serve();
