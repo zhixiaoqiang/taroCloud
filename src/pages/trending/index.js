@@ -87,7 +87,7 @@ class Index extends Component {
   componentWillUnmount() {}
 
   componentDidShow() {
-    this.getPlanList({ offset: 0 });
+    this.getActicalList({ offset: 0 });
   }
 
   componentDidHide() {}
@@ -140,7 +140,7 @@ class Index extends Component {
       });
   }
 
-  getPlanList(query = {}) {
+  getActicalList(query = {}) {
     const { category, period, lang, articalList = [] } = this.state;
     let data = {
       category: category.value, // 热门 trending 新生 upcome
@@ -162,13 +162,13 @@ class Index extends Component {
       Taro.hideLoading();
     };
     // this.hendlePlanItem("plans/list", query, success);
-    this.hendleActical("list", data, success);
+    this.hendleActical("trendingList", data, success);
   }
 
-  goPlan(data = {}) {
+  goActical(data = {}) {
     const query = `?${formatQuery(data)}`;
     Taro.navigateTo({
-      url: `/pages/create/index${query}`
+      // url: `/pages/create/index${query}`
     });
   }
 
@@ -218,7 +218,7 @@ class Index extends Component {
         githubRangeValue: [categoryIndex, periodIndex, langIndex],
         isPaging: true
       },
-      () => this.getPlanList({ offset: 0 })
+      () => this.getActicalList({ offset: 0 })
     );
   };
 
@@ -246,10 +246,10 @@ class Index extends Component {
           value={this.state.searchValue}
           onChange={value => this.setState({ searchValue: value })}
           onConfirm={() =>
-            this.getPlanList({ planName: this.state.searchValue })
+            this.getActicalList({ planName: this.state.searchValue })
           }
           onActionClick={() =>
-            this.getPlanList({ planName: this.state.searchValue })
+            this.getActicalList({ planName: this.state.searchValue })
           }
         /> */}
         {/* <AtNavBar
@@ -308,7 +308,7 @@ class Index extends Component {
         {/* date & language picker */}
         <AtLoadMore
           status={this.handleLoadStatus()}
-          onClick={() => this.getPlanList()}
+          onClick={() => this.getActicalList()}
         />
       </View>
     );

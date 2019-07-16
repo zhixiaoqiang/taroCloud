@@ -28,7 +28,7 @@ exports.main = (event, context) => {
     await next(); // 执行下一中间件
   });
 
-  app.router("list", async ctx => {
+  app.router("trendingList", async ctx => {
     ctx.data = await post("https://extension-ms.juejin.im/resources/github", {
       category: "trending",
       lang: "javascript",
