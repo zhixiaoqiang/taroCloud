@@ -87,7 +87,23 @@ class Index extends Component {
   componentWillUnmount() {}
 
   componentDidShow() {
-    this.getActicalList({ offset: 0 });
+    const trendingProps = Taro.getStorageSync("trendingProps");
+    if (trendingProps) {
+      const { githubRange } = this.state;
+      const [category, period, lang] = githubRange;
+      const { categoryIndex, periodIndex, langIndex } = trendingProps;
+      this.setState(
+        {
+          category: category[categoryIndex],
+          period: period[periodIndex],
+          lang: lang[langIndex],
+          githubRangeValue: [categoryIndex, periodIndex, langIndex]
+        },
+        () => this.getActicalList({ offset: 0 })
+      );
+    } else {
+      this.getActicalList({ offset: 0 });
+    }
   }
 
   componentDidHide() {}
@@ -100,25 +116,8 @@ class Index extends Component {
     this.insertUserInfo(userInfo);
   }
 
-  getUserOpenId() {
-    if (this.state.openId) return this.state.openId;
-    return wx.cloud
-      .callFunction({
-        name: "login"
-      })
-      .then(res => {
-        this.setState({
-          openId: res.result.openid
-        });
-        return res.result.openid;
-      })
-      .catch(err => {
-        return false;
-      });
-  }
-
   async insertUserInfo(data) {
-    let openId = await this.getUserOpenId();
+    const openId = Taro.getStorageSync("openId");
     const user = wx.cloud.database().collection("user");
     user
       .where({
@@ -193,6 +192,16 @@ class Index extends Component {
     const { githubRange } = this.state;
     const [category, period, lang] = githubRange;
     const [categoryIndex, periodIndex, langIndex] = value;
+
+    Taro.setStorage({
+      key: "trendingProps",
+      data: {
+        categoryIndex,
+        periodIndex,
+        langIndex
+      }
+    });
+
     Taro.showLoading({
       title: "加载中···",
       mask: true
@@ -272,11 +281,12 @@ class Index extends Component {
               description,
               reponame,
               username,
+              messageURL,
               lang
             } = item;
             return (
               <AtCard
-                key={i}
+                key={messageURL}
                 note={String(
                   `Star: ${starCount} Fork: ${forkCount} Build by: ${username}`
                 )}

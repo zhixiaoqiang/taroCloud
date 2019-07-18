@@ -63,25 +63,8 @@ class Index extends Component {
     this.insertUserInfo(userInfo);
   }
 
-  getUserOpenId() {
-    if (this.state.openId) return this.state.openId;
-    return wx.cloud
-      .callFunction({
-        name: "login"
-      })
-      .then(res => {
-        this.setState({
-          openId: res.result.openid
-        });
-        return res.result.openid;
-      })
-      .catch(err => {
-        return false;
-      });
-  }
-
   async insertUserInfo(data) {
-    let openId = await this.getUserOpenId();
+    const openId = Taro.getStorageSync("openId");
     const user = wx.cloud.database().collection("user");
     user
       .where({

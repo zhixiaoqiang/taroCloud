@@ -41,6 +41,26 @@ exports.main = (event, context) => {
     ctx.body = ctx.data;
   });
 
+  app.router("list", async ctx => {
+    try {
+      const { pageSize = 10, offset = 0 } = event.data;
+      const res = await fednews
+        .where({
+          site: "github"
+        })
+        .limit(pageSize)
+        .skip(offset)
+        .get();
+
+      ctx.body = {
+        success: true,
+        data: res.data
+      };
+    } catch (error) {
+      ctx.body = { code: 0, success: false, error: error };
+    }
+  });
+
   async function insertFedNew(item, site) {
     const isRepeat = await fednews
       .where({
@@ -55,7 +75,6 @@ exports.main = (event, context) => {
     return await fednews.add({
       data: {
         site,
-        isRepeat,
         ...item
       }
     });
