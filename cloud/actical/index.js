@@ -62,22 +62,38 @@ exports.main = (event, context) => {
   });
 
   async function insertFedNew(item, site) {
-    const isRepeat = await fednews
+    const { data: result } = await fednews
       .where({
         messageURL: item.messageURL
       })
+      .field({
+        starCount: true
+      })
       .get();
+    const fedNew = result[0];
 
-    if (isRepeat.data.length > 0) {
+    if (!fedNew) {
+      return await fednews.add({
+        data: {
+          site,
+          ...item
+        }
+      });
+    } else {
+      if (fedNew.starCount !== item.startCount) {
+        return await fednews
+          .where({
+            messageURL: item.messageURL
+          })
+          .update({
+            data: {
+              site,
+              ...item
+            }
+          });
+      }
       return Promise.resolve();
     }
-
-    return await fednews.add({
-      data: {
-        site,
-        ...item
-      }
-    });
   }
 
   app.router("insertFedNews", async ctx => {

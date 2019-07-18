@@ -44,9 +44,7 @@
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "taro-ui": "^2.2.1",
-    "tcb-router": "^1.1.2",
-    "wx-server-sdk": "^0.1.4"
+    "taro-ui": "^2.2.1"
   },
   "devDependencies": {
     "@types/react": "^16.4.8",
