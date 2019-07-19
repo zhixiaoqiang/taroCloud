@@ -111,13 +111,15 @@ exports.main = (event, context) => {
   });
 
   app.router("insertFedNewsDay", async ctx => {
-    const { date, text } = event.data;
+    const { createTime, text, type, title } = event.data;
 
     try {
       await fednewsDay.add({
         data: {
-          date,
-          text
+          createTime,
+          text,
+          type,
+          title
         }
       });
       ctx.body = { success: true, data: "成功" };
@@ -127,14 +129,16 @@ exports.main = (event, context) => {
   });
 
   app.router("insertFedNewsWeek", async ctx => {
-    const { date, text, type } = event.data;
+    const { effectDate, invaildDate, text, type, title } = event.data;
 
     try {
       await fednewsWeek.add({
         data: {
-          date,
+          effectDate,
+          invaildDate,
           text,
-          type
+          type,
+          title
         }
       });
       ctx.body = { success: true, data: "成功" };
