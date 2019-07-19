@@ -22,7 +22,7 @@ export default class Index extends Component {
           title: "Trending",
           iconType: "analytics",
           text: "new",
-          router: "/pages/test/index",
+          router: "/pages/trending/index",
           max: 0
         },
         {
