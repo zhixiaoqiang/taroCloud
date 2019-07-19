@@ -12,5 +12,12 @@
         "site": "github"
       }
     }
+  },
+  {
+    "name": "fed-news trendingList",
+    "value": {
+      "$url": "trendingList",
+      "data": {}
+    }
   }
 ]

@@ -11,6 +11,8 @@ cloud.init({
 const db = cloud.database();
 // const _ = db.command;
 const fednews = db.collection("fed-news");
+const fednewsDay = db.collection("fed-news-day");
+const fednewsWeek = db.collection("fed-news-week");
 // const MAX_LIMIT = 100;
 /**
  * 这个示例将经自动鉴权过的小程序用户 openid 返回给小程序端
@@ -29,7 +31,7 @@ exports.main = (event, context) => {
   });
 
   app.router("trendingList", async ctx => {
-    ctx.data = await post("https://extension-ms.juejin.im/resources/github", {
+    const res = await post("https://extension-ms.juejin.im/resources/github", {
       category: "trending",
       lang: "javascript",
       limit: 30,
@@ -38,7 +40,7 @@ exports.main = (event, context) => {
       ...event.data
     });
 
-    ctx.body = ctx.data;
+    ctx.body = res;
   });
 
   app.router("list", async ctx => {
@@ -102,6 +104,39 @@ exports.main = (event, context) => {
     const tasks = list.map(async item => await insertFedNew(item, site));
     try {
       await Promise.all(tasks);
+      ctx.body = { success: true, data: "成功" };
+    } catch (error) {
+      ctx.body = { code: 0, success: false, error: error };
+    }
+  });
+
+  app.router("insertFedNewsDay", async ctx => {
+    const { date, text } = event.data;
+
+    try {
+      await fednewsDay.add({
+        data: {
+          date,
+          text
+        }
+      });
+      ctx.body = { success: true, data: "成功" };
+    } catch (error) {
+      ctx.body = { code: 0, success: false, error: error };
+    }
+  });
+
+  app.router("insertFedNewsWeek", async ctx => {
+    const { date, text, type } = event.data;
+
+    try {
+      await fednewsWeek.add({
+        data: {
+          date,
+          text,
+          type
+        }
+      });
       ctx.body = { success: true, data: "成功" };
     } catch (error) {
       ctx.body = { code: 0, success: false, error: error };

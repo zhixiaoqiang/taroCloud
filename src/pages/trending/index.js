@@ -5,7 +5,7 @@ import { languages, formatQuery } from "@/utils";
 import { View, Picker } from "@tarojs/components";
 import Loading from "@/components/common/loading";
 import Footer from "@/components/common/footer";
-import { AtSearchBar, AtCard, AtNavBar, AtLoadMore } from "taro-ui";
+import { AtCard, AtLoadMore } from "taro-ui";
 
 import "./index.less";
 
@@ -245,11 +245,8 @@ class Index extends Component {
       return <Loading />;
     }
     return (
-      <View className='trending'>
-        {/* <AtNoticebar icon='volume-plus' single marquee>
-          今天也要开心鸭
-        </AtNoticebar>
-        <AtSearchBar
+      <View className="trending">
+        {/* <AtSearchBar
           placeholder='输入计划名称或首字母缩写'
           showActionButton
           value={this.state.searchValue}
@@ -261,37 +258,34 @@ class Index extends Component {
             this.getActicalList({ planName: this.state.searchValue })
           }
         /> */}
-        {/* <AtNavBar
-          fixed
-          onClickRgIconSt={this.handleClick}
-          onClickRgIconNd={this.handleClick}
-          onClickLeftIcon={this.handleClick}
-          color='#000'
-          // title='NavBar 导航栏示例'
-          leftText='返回'
-          rightFirstIconType='bullet-list'
-          // rightSecondIconType='user'
-        /> */}
-        <View className='github-list'>
+        <View className="github-list">
           {articalList.map((item, i) => {
             const {
-              id,
               starCount,
               forkCount,
               description,
               reponame,
               username,
-              messageURL,
+              url,
               lang
             } = item;
             return (
               <AtCard
-                key={messageURL}
+                key={url}
                 note={String(
                   `Star: ${starCount} Fork: ${forkCount} Build by: ${username}`
                 )}
                 extra={String(lang)}
                 title={String(reponame)}
+                onClick={() => {
+                  Taro.setClipboardData({
+                    data: url
+                  }).then(() => {
+                    Taro.showToast({
+                      title: "已复制链接到剪切板"
+                    });
+                  });
+                }}
               >
                 {description || "暂无描述"}
               </AtCard>
@@ -300,18 +294,18 @@ class Index extends Component {
         </View>
         <Footer current={2} />
 
-        <View className='fix-bottom github-props'>
+        <View className="fix-bottom github-props">
           <Picker
-            mode='multiSelector'
+            mode="multiSelector"
             range={githubRange}
-            rangeKey='name'
+            rangeKey="name"
             value={githubRangeValue}
             onChange={e => this.onChangeGithubParams(e.detail.value)}
           >
-            <View className='filter' animation>
-              <Text className='filter-item'>{category.name}</Text>&
-              <Text className='filter-item'>{period.name}</Text>&
-              <Text className='filter-item'>{lang.name}</Text>
+            <View className="filter" animation>
+              <Text className="filter-item">{category.name}</Text>&
+              <Text className="filter-item">{period.name}</Text>&
+              <Text className="filter-item">{lang.name}</Text>
             </View>
           </Picker>
         </View>
