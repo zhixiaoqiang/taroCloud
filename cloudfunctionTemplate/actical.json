@@ -19,5 +19,12 @@
       "$url": "trendingList",
       "data": {}
     }
+  },
+  {
+    "name": "fed-news list",
+    "value": {
+      "$url": "list",
+      "data": {}
+    }
   }
 ]

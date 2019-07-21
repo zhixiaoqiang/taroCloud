@@ -9,7 +9,7 @@ cloud.init({
   traceUser: true
 });
 const db = cloud.database();
-// const _ = db.command;
+const _ = db.command;
 const fednews = db.collection("fed-news");
 const fednewsDay = db.collection("fed-news-day");
 const fednewsWeek = db.collection("fed-news-week");
@@ -46,10 +46,24 @@ exports.main = (event, context) => {
   app.router("list", async ctx => {
     try {
       const { pageSize = 10, offset = 0 } = event.data;
+      await fednews
+        .where({
+          hasPush: false
+        })
+        .orderBy("starCount", "desc")
+        .limit(pageSize)
+        .skip(offset)
+        .update({
+          data: {
+            hasPush: true
+          }
+        });
+
       const res = await fednews
         .where({
-          site: "github"
+          hasPush: false
         })
+        .orderBy("starCount", "desc")
         .limit(pageSize)
         .skip(offset)
         .get();
@@ -78,6 +92,7 @@ exports.main = (event, context) => {
       return await fednews.add({
         data: {
           site,
+          hasPush: false,
           ...item
         }
       });
