@@ -46,19 +46,6 @@ exports.main = (event, context) => {
   app.router("list", async ctx => {
     try {
       const { pageSize = 10, offset = 0 } = event.data;
-      await fednews
-        .where({
-          hasPush: false
-        })
-        .orderBy("starCount", "desc")
-        .limit(pageSize)
-        .skip(offset)
-        .update({
-          data: {
-            hasPush: true
-          }
-        });
-
       const res = await fednews
         .where({
           hasPush: false
@@ -67,6 +54,15 @@ exports.main = (event, context) => {
         .limit(pageSize)
         .skip(offset)
         .get();
+
+      const tasks = res.data.map(
+        async item =>
+          await setFedNew({
+            messageURL: item.messageURL,
+            hasPush: true
+          })
+      );
+      await Promise.all(tasks);
 
       ctx.body = {
         success: true,
@@ -77,7 +73,7 @@ exports.main = (event, context) => {
     }
   });
 
-  async function insertFedNew(item, site) {
+  async function setFedNew(item, site) {
     const { data: result } = await fednews
       .where({
         messageURL: item.messageURL
@@ -104,7 +100,6 @@ exports.main = (event, context) => {
           })
           .update({
             data: {
-              site,
               ...item
             }
           });
@@ -116,7 +111,7 @@ exports.main = (event, context) => {
   app.router("insertFedNews", async ctx => {
     const { site, list = [] } = event.data;
 
-    const tasks = list.map(async item => await insertFedNew(item, site));
+    const tasks = list.map(async item => await setFedNew(item, site));
     try {
       await Promise.all(tasks);
       ctx.body = { success: true, data: "成功" };
