@@ -63,7 +63,6 @@ class App extends Component {
       const updateManager = Taro.getUpdateManager();
       updateManager.onCheckForUpdate(res => {
         // 请求完新版本信息的回调
-        console.log("hasUpdate", res.hasUpdate);
       });
       updateManager.onUpdateReady(() => {
         Taro.showModal({
