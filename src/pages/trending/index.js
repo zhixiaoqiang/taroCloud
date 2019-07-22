@@ -245,7 +245,7 @@ class Index extends Component {
       return <Loading />;
     }
     return (
-      <View className="trending">
+      <View className='trending'>
         {/* <AtSearchBar
           placeholder='输入计划名称或首字母缩写'
           showActionButton
@@ -258,7 +258,7 @@ class Index extends Component {
             this.getActicalList({ planName: this.state.searchValue })
           }
         /> */}
-        <View className="github-list">
+        <View className='github-list'>
           {articalList.map((item, i) => {
             const {
               starCount,
@@ -271,7 +271,7 @@ class Index extends Component {
             } = item;
             return (
               <AtCard
-                key={url}
+                key={i}
                 note={String(
                   `Star: ${starCount} Fork: ${forkCount} Build by: ${username}`
                 )}
@@ -294,18 +294,18 @@ class Index extends Component {
         </View>
         <Footer current={2} />
 
-        <View className="fix-bottom github-props">
+        <View className='fix-bottom github-props'>
           <Picker
-            mode="multiSelector"
+            mode='multiSelector'
             range={githubRange}
-            rangeKey="name"
+            rangeKey='name'
             value={githubRangeValue}
             onChange={e => this.onChangeGithubParams(e.detail.value)}
           >
-            <View className="filter" animation>
-              <Text className="filter-item">{category.name}</Text>&
-              <Text className="filter-item">{period.name}</Text>&
-              <Text className="filter-item">{lang.name}</Text>
+            <View className='filter' animation>
+              <Text className='filter-item'>{category.name}</Text>&
+              <Text className='filter-item'>{period.name}</Text>&
+              <Text className='filter-item'>{lang.name}</Text>
             </View>
           </Picker>
         </View>
