@@ -13,7 +13,7 @@ export default class Index extends Component {
           router: "/pages/index/index"
         },
         {
-          title: "待办事项",
+          title: "资讯管理",
           iconType: "bullet-list",
           text: "new",
           router: "/pages/create/index"
