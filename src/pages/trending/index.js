@@ -33,7 +33,7 @@ const PERIOD = [
     value: "month"
   }
 ];
-const PAGE_SIZE = "30";
+const PAGE_SIZE = 30;
 
 @connect(
   ({ home, global }) => ({
@@ -80,9 +80,7 @@ class Index extends Component {
 
   componentDidMount() {}
 
-  componentWillReceiveProps(nextProps) {
-    // console.log(this.props, nextProps)
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillUnmount() {}
 
@@ -150,6 +148,10 @@ class Index extends Component {
       ...query
     };
 
+    this.setState({
+      isPaging: true
+    });
+
     const success = res => {
       let { data } = res.result || {};
       const list = data || [];
@@ -160,8 +162,15 @@ class Index extends Component {
       });
       Taro.hideLoading();
     };
-    // this.hendlePlanItem("plans/list", query, success);
-    this.hendleActical("trendingList", data, success);
+
+    const fail = () => {
+      this.setState({
+        isPaging: false
+      });
+      Taro.hideLoading();
+    };
+
+    this.hendleActical("trendingList", data, success, fail);
   }
 
   goActical(data = {}) {
@@ -171,7 +180,7 @@ class Index extends Component {
     });
   }
 
-  hendleActical(url, data, success) {
+  hendleActical(url, data, success, fail) {
     wx.cloud
       .callFunction({
         // 要调用的云函数名称
@@ -185,7 +194,10 @@ class Index extends Component {
       .then(res => {
         success && success(res);
       })
-      .catch(err => console.warn(err));
+      .catch(err => {
+        console.warn(err);
+        fail && fail(res);
+      });
   }
 
   onChangeGithubParams = value => {
@@ -239,11 +251,14 @@ class Index extends Component {
       period,
       githubRange,
       githubRangeValue,
-      isComplete
+      isComplete,
+      isPaging
     } = this.state;
+
     if (!articalList) {
       return <Loading />;
     }
+    console.warn(isPaging);
     return (
       <View className='trending'>
         {/* <AtSearchBar
@@ -273,7 +288,7 @@ class Index extends Component {
               <AtCard
                 key={i}
                 note={String(
-                  `Star: ${starCount} Fork: ${forkCount} Build by: ${username}`
+                  `Star: ${starCount} Fork: ${forkCount} Build: ${username}`
                 )}
                 extra={String(lang)}
                 title={String(reponame)}
@@ -295,6 +310,7 @@ class Index extends Component {
         <Footer current={2} />
 
         <View className='fix-bottom github-props'>
+          {/* date & language picker */}
           <Picker
             mode='multiSelector'
             range={githubRange}
@@ -309,17 +325,17 @@ class Index extends Component {
             </View>
           </Picker>
         </View>
-        {/* date & language picker */}
+
+        {/* <Loading /> */}
         <AtLoadMore
-          status={this.handleLoadStatus()}
+          status={this.handleLoadStatus(isComplete, isPaging)}
           onClick={() => this.getActicalList()}
         />
       </View>
     );
   }
 
-  handleLoadStatus() {
-    const { isPaging, isComplete } = this.state;
+  handleLoadStatus(isComplete, isPaging) {
     return isComplete ? "noMore" : isPaging ? "loading" : "more";
   }
 }
