@@ -1,155 +1,143 @@
 /* eslint-disable react/no-unused-state */
-import Taro, { Component } from "@tarojs/taro";
-import { connect } from "@tarojs/redux";
-
-import { View } from "@tarojs/components";
-import Loading from "@/components/common/loading";
-import Footer from "@/components/common/footer";
-import { AtButton, AtNoticebar, AtSearchBar, AtCard, AtIcon } from "taro-ui";
-import Utils from "@/utils";
-import "./index.less";
+import Taro, { Component } from '@tarojs/taro'
+import { connect } from '@tarojs/redux'
+import PropTypes from 'prop-types'
+import { View } from '@tarojs/components'
+import Loading from '@/components/common/loading'
+import Footer from '@/components/common/footer'
+import { AtButton, AtNoticebar, AtSearchBar, AtCard, AtIcon } from 'taro-ui'
+import Utils from '@/utils'
+import './index.less'
 
 @connect(
   ({ home, global }) => ({
     home,
-    global
+    global,
   }),
   dispatch => ({
     ...dispatch.home,
-    ...dispatch.global
+    ...dispatch.global,
   })
 )
 class Index extends Component {
-  config = {
-    navigationBarTitleText: "首页"
-  };
-
-  componentWillMount() {
+  componentWillMount () {
     // 获取用户信息
     Taro.getSetting({
       success: res => {
-        if (res.authSetting["scope.userInfo"]) {
+        if (res.authSetting['scope.userInfo']) {
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           Taro.getUserInfo({
             success: result => {
-              this.saveUserInfo(result.userInfo);
+              this.saveUserInfo(result.userInfo)
             },
-            fail: err => console.warn(err)
-          });
+            fail: err => console.warn(err),
+          })
         }
-      }
-    });
+      },
+    })
   }
 
-  componentDidMount() {}
-
-  componentWillReceiveProps(nextProps) {
-    // console.log(this.props, nextProps)
+  componentDidShow () {
+    this.getPlanList()
   }
 
-  componentWillUnmount() {}
+  componentDidHide () {}
 
-  componentDidShow() {
-    this.getPlanList();
-  }
-
-  componentDidHide() {}
-
-  saveUserInfo(userInfo) {
+  saveUserInfo (userInfo) {
     this.props.dispatchSetGlobalInfo({
       avatarUrl: userInfo.avatarUrl,
-      userInfo: userInfo
-    });
-    this.insertUserInfo(userInfo);
+      userInfo: userInfo,
+    })
+    this.insertUserInfo(userInfo)
   }
 
-  async insertUserInfo(data) {
-    const openId = Taro.getStorageSync("openId");
-    const user = wx.cloud.database().collection("user");
+  async insertUserInfo (data) {
+    const openId = Taro.getStorageSync('openId')
+    const user = wx.cloud.database().collection('user')
     user
       .where({
-        _openid: openId
+        _openid: openId,
       })
       .get()
       .then(res => {
         if (!res.data.length) {
           user
             .add({
-              data
+              data,
             })
-            .then(addRes => console.warn(addRes));
+            .then(addRes => console.warn(addRes))
         } else {
           user.doc(res.data[0]._id).update({
-            data
-          });
+            data,
+          })
         }
-      });
+      })
   }
 
-  getPlanList(query = {}) {
+  getPlanList (query = {}) {
     const success = res => {
-      let { data = {} } = res.result || {};
+      let { data = {} } = res.result || {}
       this.setState({
-        planList: data.data || []
-      });
-    };
-    this.hendlePlanItem("plans/list", query, success);
+        planList: data.data || [],
+      })
+    }
+    this.hendlePlanItem('plans/list', query, success)
     // this.hendleActical("list", {}, res => console.warn(res));
   }
 
-  goPlan(data = {}) {
-    const query = `?${Utils.formatQuery(data)}`;
+  goPlan (data = {}) {
+    const query = `?${Utils.stringify(data)}`
     Taro.navigateTo({
-      url: `/pages/create/index${query}`
-    });
+      url: `/pages/create/index${query}`,
+    })
   }
 
-  hendleActical(url, data, success) {
+  hendleActical (url, data, success) {
     wx.cloud
       .callFunction({
         // 要调用的云函数名称
-        name: "actical",
+        name: 'actical',
         // 传递给云函数的参数
         data: {
           $url: url,
-          data
-        }
+          data,
+        },
       })
       .then(res => {
-        success && success(res);
+        success && success(res)
       })
-      .catch(err => console.warn(err));
+      .catch(err => console.warn(err))
   }
 
-  hendlePlanItem(url, data, success) {
+  hendlePlanItem (url, data, success) {
     wx.cloud
       .callFunction({
         // 要调用的云函数名称
-        name: "plans",
+        name: 'plans',
         // 传递给云函数的参数
         data: {
           $url: url,
-          data
-        }
+          data,
+        },
       })
       .then(res => {
-        success && success(res);
+        success && success(res)
       })
-      .catch(err => console.warn(err));
+      .catch(err => console.warn(err))
   }
 
-  render() {
-    const { planList } = this.state;
+  render () {
+    const { planList } = this.state
     if (!planList) {
-      return <Loading />;
+      return <Loading />
     }
     return (
-      <View className='index'>
-        <AtNoticebar icon='volume-plus' single marquee>
+      <View className="index">
+        <AtNoticebar icon="volume-plus" single marquee>
           今天也要开心鸭
         </AtNoticebar>
         <AtSearchBar
-          placeholder='输入计划名称或首字母缩写'
+          placeholder="输入计划名称或首字母缩写"
           showActionButton
           value={this.state.searchValue}
           onChange={value => this.setState({ searchValue: value })}
@@ -160,12 +148,12 @@ class Index extends Component {
             this.getPlanList({ planName: this.state.searchValue })
           }
         />
-        <View className='plans'>
+        <View className="plans">
           {planList.map(item => (
             <AtCard
               key={item._id}
-              note={`${item.date || ""} ${item.time}`}
-              extra={item.isLong ? "每日" : item.date}
+              note={`${item.date || ''} ${item.time}`}
+              extra={item.isLong ? '每日' : item.date}
               title={item.planName}
               onClick={() => this.goPlan({ id: item._id })}
             >
@@ -175,18 +163,26 @@ class Index extends Component {
         </View>
         <Footer current={0} />
         <AtButton
-          className='create-plan'
-          open-type='getUserInfo'
+          className="create-plan"
+          open-type="getUserInfo"
           onGetuserinfo={res => {
-            this.saveUserInfo(res.detail.userInfo);
-            this.goPlan({ isAdd: true });
+            this.saveUserInfo(res.detail.userInfo)
+            this.goPlan({ isAdd: true })
           }}
         >
-          <AtIcon value='add' size='20' color='#FFF' />
+          <AtIcon value="add" size="20" color="#FFF" />
         </AtButton>
       </View>
-    );
+    )
   }
 }
 
-export default Index;
+Index.config = {
+  navigationBarTitleText: '首页',
+}
+
+Index.propTypes = {
+  dispatchSetGlobalInfo: PropTypes.func,
+}
+
+export default Index

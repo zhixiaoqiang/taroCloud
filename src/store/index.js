@@ -17,9 +17,8 @@ const store = init({
   middlewares,
   plugins: [
     immerPlugin(),
-    updatedPlugin() // 在一定的时间段内防止频繁的获取请求
-  ]
+    updatedPlugin(), // 在一定的时间段内防止频繁的获取请求
+  ],
 })
 
 export default store
-

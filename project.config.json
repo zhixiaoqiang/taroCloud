@@ -1,7 +1,7 @@
 {
 	"miniprogramRoot": "dist/",
 	"cloudfunctionRoot": "cloud/",
-	"projectname": "wxCloud2",
+	"projectname": "fedpush",
 	"description": "小程序云开发实践",
 	"appid": "wxbb54d7013077bb1a",
 	"setting": {

@@ -1,0 +1,55 @@
+@mainColor: #2196F3;
+
+page {
+  background: #FFFFFF;
+}
+
+.promotion-info {
+  padding-bottom: 60rpx;
+
+  .image {
+    width: 100%;
+  }
+
+  &-block {
+    text-align: center;
+    padding: 60rpx 40rpx 0;
+
+    .block-title {
+      display: inline-block;
+      padding: 4rpx 10rpx;
+      background: url(http://img3.dian.so/lhc/2019/09/03/85w_15h_BCB501567503767.png)
+        right bottom no-repeat;
+      background-size: 70% 60%;
+    }
+
+    .block-title-line {
+      margin: 10rpx auto;
+      width: 28rpx;
+      height: 4rpx;
+      background: @mainColor;
+    }
+
+    .block-children {
+      font-family: PingFangSC-Regular;
+      width: 80%;
+      margin: 0 auto;
+      font-size: 28rpx;
+      color: rgba(0, 0, 0, .65);
+      line-height: 50rpx;
+
+      .arrow {
+        width: 40rpx;
+        padding-right: 8rpx;
+      }
+    }
+
+    .swiper {
+      height: 780rpx !important;
+    }
+  }
+
+  .block-images {
+    display: flex;
+  }
+}

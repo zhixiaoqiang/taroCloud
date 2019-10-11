@@ -1,7 +1,7 @@
 export default {
   state: {},
   reducers: {
-    dispatchSetGlobalInfo(state, payload) {
+    dispatchSetGlobalInfo (state, payload) {
       return { ...state, ...payload }
     },
   },
@@ -10,5 +10,5 @@ export default {
     //   // await new Promise(resolve => setTimeout(resolve, 1000))
     //   this.increment(payload)
     // }
-  }
+  },
 }
