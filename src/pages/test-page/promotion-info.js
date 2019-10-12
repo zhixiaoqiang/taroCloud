@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
-import { usePage } from '@/hooks'
 import { View, Image, Swiper, SwiperItem, Video } from '@tarojs/components'
+import { usePage } from '@/hooks'
 import './promotion-info.less'
 
 const init = {

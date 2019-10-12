@@ -1,5 +1,6 @@
-import Taro, { showToast, hideNavigationBarLoading, hideLoading } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { isFunction, isBoolean, isObject } from '@/utils/index'
+import { showToast, hideNavigationBarLoading, hideLoading } from '@/sdk'
 
 /**
  * ref
@@ -143,6 +144,7 @@ export function useEventEnhancement (initPageState, state, setState) {
     loading,
     ...pageEvents,
   })
+
   // 2. 将所有方法加入到this环境中，这样就可以直接调用其他方法
   for (const propName in pageEvents) {
     const handler = pageEvents[propName]
@@ -153,7 +155,6 @@ export function useEventEnhancement (initPageState, state, setState) {
       }
     }
   }
-
   return [pageEvents, loading, error]
 }
 

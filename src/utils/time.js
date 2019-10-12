@@ -1,8 +1,3 @@
-const SECOND = 1000
-const MINUTE = SECOND * 60
-const HOUR = MINUTE * 60
-const DAY = HOUR * 24
-
 const fillZero = value => {
   return value < 10 ? `0${value}` : value
 }
@@ -49,6 +44,15 @@ export const formatTime = (timestamp, formatStr) => {
     .replace('ss', second)
 }
 
+// 获取当前月有多少天
+export const getCountDays = (timestamp) => {
+  const curDate = compatibleIosDate(timestamp)
+  const curMonth = curDate.getMonth()
+  curDate.setMonth(curMonth + 1)
+  curDate.setDate(0)
+  return curDate.getDate()
+}
+
 export const timeUnitFormat = function (time) {
   if (time < 1) {
     return '00'
@@ -86,6 +90,7 @@ export default {
   fillZero,
   format: formatTime,
   secondsToTime,
+  getCountDays,
   timeUnitFormat,
   compatibleIosDate,
 }

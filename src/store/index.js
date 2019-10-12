@@ -1,11 +1,9 @@
-// import thunkMiddleware from 'redux-thunk'
 import { init } from '@rematch/core'
 import immerPlugin from '@rematch/immer'
 import updatedPlugin from '@rematch/updated'
 import models from '@/models'
 
 const middlewares = [
-  // thunkMiddleware
 ]
 
 if (process.env.NODE_ENV === 'development') {

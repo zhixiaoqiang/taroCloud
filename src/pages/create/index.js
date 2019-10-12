@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { connect } from '@tarojs/redux'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import { View, Picker, Label } from '@tarojs/components'
 import { AtButton, AtForm, AtInput, AtSwitch, AtTextarea } from 'taro-ui'
 import Loading from '@/components/common/loading'
@@ -13,10 +13,6 @@ import './index.less'
   ...dispatch.home,
 }))
 class Index extends Component {
-  config = {
-    navigationBarTitleText: '创建计划',
-  }
-
   constructor (props) {
     super(props)
     let curDate = new Date()
@@ -49,7 +45,7 @@ class Index extends Component {
       })
     }
 
-    this.hendlePlanItem('plans/detail', { id }, success)
+    this.handlePlanItem('plans/detail', { id }, success)
   }
 
   setPlanProps (data = {}) {
@@ -59,7 +55,7 @@ class Index extends Component {
     })
   }
 
-  varify (planProps) {
+  verify (planProps) {
     if (!planProps.planName) {
       Taro.showToast({
         title: '请填写任务名称',
@@ -86,7 +82,7 @@ class Index extends Component {
       comment,
     }
 
-    if (!this.varify(params)) return
+    if (!this.verify(params)) return
 
     const success = () => {
       Taro.showToast({
@@ -95,19 +91,18 @@ class Index extends Component {
       Taro.navigateBack()
     }
     if (id) {
-      console.warn(id)
-      this.hendlePlanItem('plans/update', { ...params, id }, success)
+      this.handlePlanItem('plans/update', { ...params, id }, success)
     } else {
       params = {
         ...params,
         createTime: Time.format(new Date(), 'YYYY-MM-DD HH:mm:ss'),
         date: isLong ? null : date,
       }
-      this.hendlePlanItem('plans/create', params, success)
+      this.handlePlanItem('plans/create', params, success)
     }
   }
 
-  hendlePlanItem (url, data, success) {
+  handlePlanItem (url, data, success) {
     wx.cloud.callFunction({
       // 要调用的云函数名称
       name: 'plans',
@@ -179,6 +174,10 @@ class Index extends Component {
       </View>
     )
   }
+}
+
+Index.config = {
+  navigationBarTitleText: '创建计划',
 }
 
 export default Index
