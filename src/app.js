@@ -17,11 +17,12 @@ class App extends Component {
   // eslint-disable-next-line react/sort-comp
   config = {
     pages: [
-      'pages/test-page/promotion-info', // 一分钟教你读懂推广通
-      'pages/trending/index',
       'pages/index/index',
+      'pages/trending/index',
+      'pages/login/index',
       'pages/create/index',
       'pages/userCenter/index',
+      'pages/test-page/promotion-info', // 一分钟教你读懂推广通
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -63,10 +64,10 @@ class App extends Component {
   updateApp () {
     if (Taro.canIUse('getUpdateManager')) {
       const updateManager = Taro.getUpdateManager()
-      updateManager.onCheckForUpdate(res => {
-        // 请求完新版本信息的回调
-        console.warn('onCheckForUpdate', res)
-      })
+      // updateManager.onCheckForUpdate(res => {
+      //   // 请求完新版本信息的回调
+      //   console.warn('onCheckForUpdate', res)
+      // })
       updateManager.onUpdateReady(() => {
         Taro.showModal({
           title: '更新提示',

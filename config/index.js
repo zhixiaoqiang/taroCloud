@@ -44,15 +44,7 @@ const config = {
   },
   defineConstants: {}, // 全局变量设置
   alias: {
-    // '@': path.resolve(__dirname, '..', 'src'),
-    '@/sdk': path.resolve(__dirname, '..', 'src/sdk'),
-    '@/hooks': path.resolve(__dirname, '..', 'src/hooks'),
-    '@/components': path.resolve(__dirname, '..', 'src/components'),
-    '@/pages': path.resolve(__dirname, '..', 'src/pages'),
-    '@/constants': path.resolve(__dirname, '..', 'src/constants'),
-    '@/services': path.resolve(__dirname, '..', 'src/services'),
-    '@/utils': path.resolve(__dirname, '..', 'src/utils'),
-    '@/models': path.resolve(__dirname, '..', 'src/models'),
+    '@': path.resolve(__dirname, '..', 'src'),
   },
   weapp: {
     module: {

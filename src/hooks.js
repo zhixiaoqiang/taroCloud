@@ -44,10 +44,21 @@ export function usePageScroll (callback) {
 }
 
 /**
+ * 监听页面大小变更
+ */
+export function useResize (callback) {
+  Taro.useResize(callback)
+}
+
+/**
  * 监听用户点击页面内转发按钮（button 组件 open-type="share"）或右上角菜单“转发”按钮的行为，并自定义转发内容
  */
 export function useShareAppMessage (callback) {
   Taro.useShareAppMessage(callback)
+}
+
+export function useTabItemTap (callback) {
+  Taro.useTabItemTap(callback)
 }
 
 /**
@@ -59,6 +70,18 @@ export function useRouter (callback) {
 
 export function useEffect (callback, array) {
   Taro.useEffect(callback, array)
+}
+
+export function useLayoutEffect (callback, array) {
+  Taro.useLayoutEffect(callback, array)
+}
+
+export function useCallback (callback, array) {
+  Taro.useCallback(callback, array)
+}
+
+export function useMemo (callback, array) {
+  Taro.useMemo(callback, array)
 }
 
 export function useMount (callback) {
@@ -89,52 +112,56 @@ export function useEventEnhancement (initPageState, state, setState) {
   const [error, setError] = useState(null)
   const pageEvents = {}
   // 1. 对包含异步的方法做一层封装，获得loading和error状态值
-  for (const propName in initPageState) {
-    const handler = initPageState[propName]
-    if (propName === 'async') {
-      const asyncEvents = initPageState.async
-      for (const eventName in asyncEvents) {
-        const event = asyncEvents[eventName]
-        if (isFunction(event)) {
-          pageEvents[eventName] = async function (...args) {
-            try {
-              setLoading({
-                [eventName]: true,
-              })
-              if (error) {
-                console.log('reset error')
-                setError(null)
-              }
-              await event.call(this, ...args)
-            } catch (err) {
-              hideNavigationBarLoading()
-              hideLoading()
-              // 请求异常在request那里有打印，这里打印非请求异常，比如代码语法错误等
-              if (!isBoolean(err.success)) {
-                console.log('err', err)
-              }
-              const title = err.code
-                ? err.msg ||
-                  err.error ||
-                  err.message ||
-                  '服务器开了小差请稍后重试'
-                : '攻城狮开了小差请稍后重试'
-              if (err.proxy) {
-                showToast({
-                  title,
-                })
-              } else {
-                setError(err)
-              }
-            }
+  if (initPageState.effects) {
+    const asyncEvents = initPageState.effects
+    for (const eventName in asyncEvents) {
+      const event = asyncEvents[eventName]
+      if (isFunction(event)) {
+        pageEvents[eventName] = async function (...args) {
+          try {
             setLoading({
-              [eventName]: false,
+              [eventName]: true,
             })
+            if (error) {
+              console.log('reset error')
+              setError(null)
+            }
+            await event.call(this, ...args)
+          } catch (err) {
+            hideNavigationBarLoading()
+            hideLoading()
+            // 请求异常在request那里有打印，这里打印非请求异常，比如代码语法错误等
+            if (!isBoolean(err.success)) {
+              console.log('err', err)
+            }
+            const title = err.code
+              ? err.msg ||
+                err.error ||
+                err.message ||
+                '服务器开了小差请稍后重试'
+              : '攻城狮开了小差请稍后重试'
+            if (err.proxy) {
+              showToast({
+                title,
+              })
+            } else {
+              setError(err)
+            }
           }
+          setLoading({
+            [eventName]: false,
+          })
         }
       }
-    } else if (propName !== 'state' && propName !== '_instance') {
-      pageEvents[propName] = handler
+    }
+  }
+  if (initPageState.reducers) {
+    const events = initPageState.reducers
+    for (const eventName in events) {
+      const event = events[eventName]
+      if (isFunction(event)) {
+        pageEvents[eventName] = event
+      }
     }
   }
 

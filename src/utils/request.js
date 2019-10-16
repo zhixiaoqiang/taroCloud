@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
-import { uploadFile, hideLoading, getCurrentPath, getStorageSync, showToast } from '@/sdk'
+import { uploadFile, hideLoading, getCurrentPath, getStorageSync } from '@/sdk'
 import { removeStaticSourceHTTPSchema } from '@/utils/index'
-import globalData from '@/global'
+import store from '@/store'
 import CONSTANTS from '@/constants/index'
 
 const getReqData = options => {
@@ -45,12 +45,14 @@ const getReqHeader = () => {
 }
 
 const requestErr = response => {
+  const { globalData } = store.getState()
+  const { dispatchSetGlobalInfo } = store.dispatch.globalData
   const code = response.code
   if (code + '' === CONSTANTS.API_CODE_NEED_LOGIN) {
     hideLoading()
     const path = getCurrentPath()
     if (!globalData.isLogin || !/pages\/login\/index/.test(path)) {
-      globalData.isLogin = true
+      dispatchSetGlobalInfo({ isLogin: true })
       Taro.reLaunch({
         url: `/pages/login/index?src=${encodeURIComponent(path)}`,
       })

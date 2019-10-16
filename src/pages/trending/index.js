@@ -36,13 +36,13 @@ const PERIOD = [
 const PAGE_SIZE = 30
 
 @connect(
-  ({ home, global }) => ({
+  ({ home, globalData }) => ({
     home,
-    global,
+    globalData,
   }),
   dispatch => ({
     ...dispatch.home,
-    ...dispatch.global,
+    ...dispatch.globalData,
   })
 )
 class Index extends Component {

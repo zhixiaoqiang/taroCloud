@@ -10,13 +10,13 @@ import Utils from '@/utils'
 import './index.less'
 
 @connect(
-  ({ home, global }) => ({
+  ({ home, globalData }) => ({
     home,
-    global,
+    globalData,
   }),
   dispatch => ({
     ...dispatch.home,
-    ...dispatch.global,
+    ...dispatch.globalData,
   })
 )
 class Index extends Component {
@@ -165,8 +165,7 @@ class Index extends Component {
         <AtButton
           className="create-plan"
           open-type="getUserInfo"
-          onGetuserinfo={res => {
-            this.saveUserInfo(res.detail.userInfo)
+          onClick={() => {
             this.goPlan({ isAdd: true })
           }}
         >

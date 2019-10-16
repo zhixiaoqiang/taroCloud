@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
 import { View, Image, Swiper, SwiperItem, Video } from '@tarojs/components'
-import { usePage } from '@/hooks'
+import { usePage, useMount } from '@/hooks'
 import './promotion-info.less'
 
 const init = {
@@ -38,12 +38,25 @@ const init = {
       },
     ],
   },
+  reducers: {
+    getData () {
+    },
+  },
+  effects: {
+    async initDate () {
+      this.getData()
+      await new Promise((resolve) => setTimeout(() => resolve(21), 1000))
+    },
+  },
 }
 
 export default function Index () {
-  const [state, events] = usePage(init)
-  console.warn(state)
-  console.warn(events)
+  const [state, events, loading, error] = usePage(init)
+  useMount(() => {
+    events.getData()
+    // events.initDate()
+  })
+
   return (
     <View className="promotion-info">
       <View className="block-images">

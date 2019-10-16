@@ -4,16 +4,18 @@ import PropTypes from 'prop-types'
 import { View, Text } from '@tarojs/components'
 import { AtAvatar, AtButton, AtIcon, AtList, AtListItem } from 'taro-ui'
 import Footer from '@/components/common/footer'
+import { setStorageSync, reLaunch, showModal } from '@/sdk'
+
 import './index.less'
 
 @connect(
-  ({ userCenter, global }) => ({
+  ({ userCenter, globalData }) => ({
     userCenter,
-    global,
+    globalData,
   }),
   dispatch => ({
     ...dispatch.userCenter,
-    ...dispatch.global,
+    ...dispatch.globalData,
   })
 )
 class UserCenter extends Component {
@@ -45,13 +47,32 @@ class UserCenter extends Component {
           thumb:
             'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png',
         },
+        {
+          title: '退出登录',
+          arrow: 'right',
+          onClick: () => {
+            showModal({
+              title: '提示',
+              content: '是否退出登录',
+              showCancel: true,
+              success () {
+                setStorageSync('isLogin', false)
+                reLaunch({
+                  url: '/pages/login/index',
+                })
+              },
+            })
+          },
+          thumb:
+            'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png',
+        },
       ],
     }
   }
 
   render () {
-    const { global } = this.props
-    const { avatarUrl, userInfo } = global
+    const { globalData } = this.props
+    const { avatarUrl, userInfo } = globalData
     const { handleList } = this.state
     return (
       <View className="user-center-container">
@@ -89,9 +110,10 @@ class UserCenter extends Component {
         <AtList>
           {handleList.map(item => (
             <AtListItem
-              title={item.title}
-              arrow={item.arrow}
-              thumb={item.thumb}
+              {...item}
+              // title={item.title}
+              // arrow={item.arrow}
+              // thumb={item.thumb}
               key={item.title}
             />
           ))}
@@ -107,7 +129,7 @@ UserCenter.config = {
 }
 
 UserCenter.propTypes = {
-  global: PropTypes.object,
+  globalData: PropTypes.object,
 }
 
 export default UserCenter
