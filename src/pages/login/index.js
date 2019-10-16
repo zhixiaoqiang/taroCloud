@@ -23,13 +23,13 @@ const init = {
           isLogin: true,
         })
         dispatch.dispatchSetGlobalInfo({ isLogin: true })
-        redirectTo({ url: '/pages/trending/index' })
+        redirectTo({ url: '/pages/trending/index-hook' })
       }
     },
     handleLogin (dispatch) {
       dispatch.dispatchSetGlobalInfo({ isLogin: true })
       setStorageSync('isLogin', true)
-      redirectTo({ url: '/pages/trending/index' })
+      redirectTo({ url: '/pages/trending/index-hook' })
     },
   },
 }

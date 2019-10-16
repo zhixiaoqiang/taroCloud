@@ -43,7 +43,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 2,
 			"list": [
 				{
 					"id": -1,
@@ -56,6 +56,13 @@
 					"id": 1,
 					"name": "pages/trending/index-hook",
 					"pathName": "pages/trending/index-hook",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/userCenter/index",
+					"pathName": "pages/userCenter/index",
 					"query": "",
 					"scene": null
 				}

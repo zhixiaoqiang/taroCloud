@@ -203,11 +203,11 @@ export function usePage (initPageState = {}) {
   })
 
   // 添加一个实例，卸载的时候清理掉，原因是避免this被清掉
-  useEffect(() => {
-    return () => {
-      initPageState._instance = null
-    }
-  }, [initPageState._instance])
+  // useEffect(() => {
+  //   return () => {
+  //     initPageState._instance = null
+  //   }
+  // }, [initPageState._instance])
   // 可在此重写setState，来支持a.b.c修改
   // 此处应该深拷贝一份state, 避免直接操作state
 

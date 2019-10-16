@@ -22,7 +22,7 @@ const init = {
         title: 'Trending',
         iconType: 'analytics',
         text: 'new',
-        router: '/pages/trending/index',
+        router: '/pages/trending/index-hook',
         max: 0,
       },
       {
@@ -34,8 +34,7 @@ const init = {
     ],
   },
   reducers: {
-    handleClick (tabList, value) {
-      let { current } = this.props
+    handleClick (tabList, value, current) {
       const curTab = tabList[value]
       if (curTab.title === '上传图片') {
         this.uploadFile()
@@ -96,7 +95,7 @@ export default function Footer (props) {
     <AtTabBar
       fixed
       tabList={tabList}
-      onClick={this.handleClick.bind(this, tabList)}
+      onClick={(value) => events.handleClick(tabList, value, current)}
       current={current}
     />
   )

@@ -1,17 +1,15 @@
-import Taro, { Component } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import PropTypes from 'prop-types'
 import { AtLoadMore } from 'taro-ui'
 
-export default class Loading extends Component {
-  render () {
-    const { text } = this.props
-    return (
-      <AtLoadMore
-        status="loading"
-        loadingText={text}
-      />
-    )
-  }
+export default function Loading (props) {
+  const { text } = props
+  return (
+    <AtLoadMore
+      status="loading"
+      loadingText={text}
+    />
+  )
 }
 
 Loading.defaultProps = {

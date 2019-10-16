@@ -17,10 +17,10 @@ class App extends Component {
   // eslint-disable-next-line react/sort-comp
   config = {
     pages: [
+      'pages/login/index',
       'pages/index/index',
       'pages/trending/index',
       'pages/trending/index-hook',
-      'pages/login/index',
       'pages/create/index',
       'pages/userCenter/index',
       'pages/test-page/promotion-info', // 一分钟教你读懂推广通

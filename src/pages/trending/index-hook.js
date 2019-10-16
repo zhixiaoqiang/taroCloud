@@ -2,14 +2,14 @@ import Taro from '@tarojs/taro'
 
 import { useDispatch } from '@tarojs/redux'
 import { usePage, useDidShow, useMount } from '@/hooks'
-import { showLoading, showModal, pageScrollTo, hideLoading, setStorageSync, setClipboardData, showToast, getStorageSync, navigateTo } from '@/sdk'
+import { showLoading, showModal, pageScrollTo, hideLoading, setStorageSync, setClipboardData, showToast, getStorageSync } from '@/sdk'
 
 import { AtCard, AtLoadMore } from 'taro-ui'
 import { View, Picker, Text } from '@tarojs/components'
 import Container from '@/components/common/container'
 import Footer from '@/components/common/footer'
 
-import { languages, stringify } from '@/utils'
+import { languages } from '@/utils'
 
 import './index.less'
 
@@ -52,10 +52,18 @@ const init = {
       return isComplete ? 'noMore' : isPaging ? 'loading' : 'more'
     },
 
-    goActical (data = {}) {
-      const query = `?${stringify(data)}`
-      navigateTo({
-        url: `/pages/create/index${query}`,
+    goActical (url) {
+      // const query = `?${stringify(data)}`
+      // navigateTo({
+      //   url: `/pages/create/index${query}`,
+      // })
+
+      setClipboardData({
+        data: url,
+      }).then(() => {
+        showToast({
+          title: '链接已复制到剪切板',
+        })
       })
     },
   },
@@ -227,6 +235,7 @@ const init = {
 export default function Index () {
   const [state, events, loading, error] = usePage(init)
   const dispatch = useDispatch()
+
   useMount(() => {
     // 获取用户信息
     Taro.getSetting({
@@ -281,15 +290,7 @@ export default function Index () {
                 )}
                 extra={String(lang)}
                 title={String(reponame)}
-                onClick={() => {
-                  setClipboardData({
-                    data: url,
-                  }).then(() => {
-                    showToast({
-                      title: '链接已复制到剪切板',
-                    })
-                  })
-                }}
+                onClick={() => events.goActical(url)}
               >
                 {description || '暂无描述'}
               </AtCard>
