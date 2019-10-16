@@ -122,7 +122,7 @@ const errorHandler = (err, options) => {
  */
 
 export default async (options = {}) => {
-  options.method = options.method ? options.method : 'GET'
+  options.method = options.method || 'GET'
   options.timestamp = +new Date()
   options.proxy = options.proxy !== false
   try {
@@ -135,7 +135,7 @@ export default async (options = {}) => {
         method: options.method,
       })
     } else {
-      options.url = '/lhc/1.0/h5/image/upload'
+      options.url = '/xxx'
       response = await uploadFile({
         url: getReqUrl(options),
         filePath: options.data,
