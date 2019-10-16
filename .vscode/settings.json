@@ -42,5 +42,8 @@
   },
   "[html]": {
     "editor.formatOnSave": true
-  }
+  },
+  "cSpell.ignoreWords": [
+    "reponame"
+  ]
 }

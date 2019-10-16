@@ -308,7 +308,6 @@ class Index extends Component {
           </Picker>
         </View>
 
-        {/* <Loading /> */}
         <AtLoadMore
           status={this.handleLoadStatus(isComplete, isPaging)}
           onClick={() => this.getActicalList()}

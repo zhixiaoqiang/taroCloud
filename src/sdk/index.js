@@ -39,6 +39,7 @@ import redirectTo from './redirectTo/index'
 import { reLaunch } from './reLaunch/index'
 import { navigateTo, navigateBack } from './navigate/index'
 import getCallbackPages from './getCallbackPages/index'
+import setClipboardData from './setClipboardData'
 import setNavigationBarColor from './setNavigationBarColor/index'
 import stopPullDownRefresh from './stopPullDownRefresh/index'
 import getSystemInfoSync from './getSystemInfoSync/index'
@@ -84,6 +85,7 @@ export {
   navigateTo,
   navigateBack,
   getCallbackPages,
+  setClipboardData,
   setNavigationBarColor,
   stopPullDownRefresh,
   getSystemInfoSync,

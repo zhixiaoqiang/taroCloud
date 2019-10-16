@@ -43,12 +43,20 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 1,
 			"list": [
 				{
 					"id": -1,
 					"name": "pages/login/index",
 					"pathName": "pages/login/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 1,
+					"name": "pages/trending/index-hook",
+					"pathName": "pages/trending/index-hook",
+					"query": "",
 					"scene": null
 				}
 			]

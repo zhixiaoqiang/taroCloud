@@ -1,45 +1,31 @@
 import Taro from '@tarojs/taro'
-import { uploadFile, hideLoading, getCurrentPath, getStorageSync } from '@/sdk'
+import { uploadFile, hideLoading, getCurrentPath } from '@/sdk'
 import { removeStaticSourceHTTPSchema } from '@/utils/index'
 import store from '@/store'
 import CONSTANTS from '@/constants/index'
 
 const getReqData = options => {
-  let data = options.data
-  if (typeof data === 'object') {
-    Object.keys(data).forEach(key => {
-      const value = data[key]
-      if (typeof value === 'string') {
-        data[key] = value.trim()
-      }
-    })
-  }
-  data = options.method === 'GET' ? data : JSON.stringify(data)
-  return data
+  let { data, method } = options
+
+  return method === 'GET' ? data : JSON.stringify(data)
 }
 
 const getReqUrl = options => {
-  const url = options.url
-  let domain = ''
+  const { url } = options
   const isDev = process.env.NODE_ENV !== 'production'
-  domain = isDev ? CONSTANTS.DEV_DOMAIN : CONSTANTS.DOMAIN
 
-  if (/^\/lhc/.test(url)) {
-    domain = isDev ? CONSTANTS.DOMAIN_BDEV : CONSTANTS.DOMAIN_B
-  }
+  const domain = isDev ? CONSTANTS.DEV_DOMAIN : CONSTANTS.DOMAIN
 
-  if (/^http/.test(url)) {
+  if (/^https?/.test(url)) {
     return url
-  } else {
-    return domain + url
   }
+
+  return domain + url
 }
 
 const getReqHeader = () => {
   const header = {
     'Content-Type': 'application/json',
-    'X-MC-ROLE': getStorageSync('role') || '1',
-    'X-MC-TOKEN': getStorageSync('token') || '',
   }
   return header
 }
@@ -47,7 +33,7 @@ const getReqHeader = () => {
 const requestErr = response => {
   const { globalData } = store.getState()
   const { dispatchSetGlobalInfo } = store.dispatch.globalData
-  const code = response.code
+  const { code } = response
   if (code + '' === CONSTANTS.API_CODE_NEED_LOGIN) {
     hideLoading()
     const path = getCurrentPath()
@@ -68,15 +54,10 @@ const requestSuccess = (response, options) => {
     return requestErr({ code: -1, msg: '服务端开小差了' })
   }
   if (!response.success) {
-    if (/foxDspApi/i.test(options.url) && response) {
-      return {
-        success: true,
-        data: response,
-      }
-    }
     return requestErr(response)
   }
   response.data = removeStaticSourceHTTPSchema(response.data)
+
   if (options.proxy) {
     return response.data
   } else {
@@ -88,7 +69,7 @@ const requestSuccess = (response, options) => {
 }
 
 const errorHandler = (err, options) => {
-  console.log('err', err)
+  console.warn('err', err)
   // 当请求status不为200时，出错信息的数据会存在两个地方，一个是data里，一个是data同级的字段里
   if (err.data && err.data.errorMessage) {
     err = err.data
@@ -122,7 +103,7 @@ const errorHandler = (err, options) => {
  */
 
 export default async (options = {}) => {
-  options.method = options.method || 'GET'
+  options.method = (options.method || 'GET').toUpperCase()
   options.timestamp = +new Date()
   options.proxy = options.proxy !== false
   try {

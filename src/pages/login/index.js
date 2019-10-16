@@ -16,12 +16,13 @@ const init = {
     isLogin: false,
   },
   effects: {
-    initData () {
+    initData (dispatch) {
       const isLogin = getStorageSync('isLogin')
       if (isLogin) {
         this.setState({
           isLogin: true,
         })
+        dispatch.dispatchSetGlobalInfo({ isLogin: true })
         redirectTo({ url: '/pages/trending/index' })
       }
     },

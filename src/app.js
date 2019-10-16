@@ -19,6 +19,7 @@ class App extends Component {
     pages: [
       'pages/index/index',
       'pages/trending/index',
+      'pages/trending/index-hook',
       'pages/login/index',
       'pages/create/index',
       'pages/userCenter/index',
