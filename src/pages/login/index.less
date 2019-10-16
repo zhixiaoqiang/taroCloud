@@ -1,0 +1,43 @@
+@mainColor: #6190E8;
+
+.pages-login-index {
+  width: 100%;
+  height: 100vh;
+
+  .container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url(https://hbimg.huabanimg.com/ab5ae33ad8e94d08f91d8a0a91f082596ade2a7324580-yzhYoV_fw658);
+    background-size: 100% 100%;
+
+    .image-container {
+      margin-top: 10rpx;
+      text-align: center;
+    }
+
+    .onecn {
+      font-size: 48rpx;
+      letter-spacing: 20rpx;
+    }
+
+    .button {
+      position: fixed;
+      width: 340rpx;
+      height: 90rpx;
+      color: white;
+      border-radius: 10rpx;
+      font-size: 36rpx;
+      background-color: @mainColor;
+
+      &:after {
+        content: "";
+        display: none;
+      }
+
+      bottom: 30rpx;
+    }
+  }
+}
