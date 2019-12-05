@@ -1,17 +1,17 @@
 /* eslint-disable import/no-commonjs */
 const path = require('path')
 
-const getOutputRoot = () => {
-  switch (process.env.TARO_ENV) {
-    case 'h5':
-      return 'dist'
-    case 'weapp':
-      return 'dist'
-    default:
-    case 'alipay':
-      return 'alipay'
-  }
-}
+// const getOutputRoot = () => {
+//   switch (process.env.TARO_ENV) {
+//     case 'h5':
+//       return 'dist'
+//     case 'weapp':
+//       return 'dist'
+//     default:
+//     case 'alipay':
+//       return 'alipay'
+//   }
+// }
 
 const config = {
   sourceRoot: 'src',
@@ -23,7 +23,7 @@ const config = {
     '750': 1,
     '828': 1.81 / 2,
   },
-  outputRoot: getOutputRoot(),
+  outputRoot: 'dist',
   plugins: {
     babel: {
       sourceMap: true,

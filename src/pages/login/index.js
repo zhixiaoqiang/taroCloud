@@ -53,7 +53,7 @@ export default function Index () {
             />
           </View>
 
-          <Button className="button" onClick={() => events.handleLogin(dispatch.globalData)}>
+          <Button className="button" onClick={() => events.handleLogin(dispatch)}>
           立即进入
           </Button>
         </View>
