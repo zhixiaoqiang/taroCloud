@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 
 import { useDispatch } from '@tarojs/redux'
-import { usePage, useDidShow, useMount } from '@/hooks'
+import { usePage, useDidShow, useMount, useMemo } from '@/hooks'
 import { showLoading, showModal, pageScrollTo, hideLoading, setStorageSync, setClipboardData, showToast, getStorageSync } from '@/sdk'
 
 import { AtCard, AtLoadMore } from 'taro-ui'

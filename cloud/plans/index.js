@@ -3,10 +3,10 @@
 
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
-const pinyin4js = require("pinyin4js")
+const pinyin4js = require('pinyin4js')
 // 初始化 cloud
 cloud.init({
-  traceUser: true
+  traceUser: true,
 })
 const db = cloud.database()
 const _ = db.command
@@ -14,9 +14,9 @@ const plans = db.collection('plans')
 const MAX_LIMIT = 100
 /**
  * 这个示例将经自动鉴权过的小程序用户 openid 返回给小程序端
- * 
+ *
  * event 参数包含小程序端调用传入的 data
- * 
+ *
  */
 exports.main = (event, context) => {
   const app = new TcbRouter({ event })
@@ -24,8 +24,8 @@ exports.main = (event, context) => {
 
   // app.use 表示该中间件会适用于所有的路由
   app.use(async (ctx, next) => {
-    ctx.data = {};
-    await next(); // 执行下一中间件
+    ctx.data = {}
+    await next() // 执行下一中间件
   })
 
   app.router('plans/initPY', async (ctx) => {
@@ -48,7 +48,6 @@ exports.main = (event, context) => {
       errMsg: acc.errMsg,
     }))
 
-
     const res = result.data.map(async (item) => {
       let {
         _id: id,
@@ -60,16 +59,16 @@ exports.main = (event, context) => {
         .doc(id)
         .update({
           data: {
-            planNamePinYing
-          }
+            planNamePinYing,
+          },
         })
     })
 
     try {
       await Promise.all(res)
-      ctx.body = { code: 0, data: '成功' };
+      ctx.body = { code: 0, data: '成功' }
     } catch (error) {
-      ctx.body = { code: 0, data: error };
+      ctx.body = { code: 0, data: error }
     }
   })
 
@@ -87,16 +86,16 @@ exports.main = (event, context) => {
             _openid: OPENID,
             planName: event.data.planName ? db.RegExp({
               regexp: event.data.planName,
-              options: 'i'
-            }) : undefined
+              options: 'i',
+            }) : undefined,
           },
           {
             _openid: OPENID,
             planNamePinYing: event.data.planName ? db.RegExp({
               regexp: event.data.planName,
-              options: 'i'
-            }) : undefined
-          }
+              options: 'i',
+            }) : undefined,
+          },
         ]))
         .orderBy('isLong', 'desc')
         .orderBy('date', 'asc')
@@ -112,7 +111,7 @@ exports.main = (event, context) => {
       errMsg: acc.errMsg,
     }))
 
-    ctx.body = { code: 0, data: ctx.data };
+    ctx.body = { code: 0, data: ctx.data }
   })
 
   app.router('plans/create', async (ctx) => {
@@ -121,10 +120,9 @@ exports.main = (event, context) => {
       data: {
         ...event.data,
         planNamePinYing,
-        _openid: OPENID
-      }
+        _openid: OPENID,
+      },
     })
-
 
     ctx.body = '创建成功'
   })
@@ -133,7 +131,6 @@ exports.main = (event, context) => {
     ctx.data = await plans
       .doc(event.data.id)
       .get()
-
 
     ctx.body = ctx.data
   })
@@ -145,10 +142,9 @@ exports.main = (event, context) => {
       .update({
         data: {
           ...event.data,
-          planNamePinYing
-        }
+          planNamePinYing,
+        },
       })
-
 
     ctx.body = '更新成功'
   })

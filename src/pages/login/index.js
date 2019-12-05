@@ -22,12 +22,12 @@ const init = {
         this.setState({
           isLogin: true,
         })
-        dispatch.dispatchSetGlobalInfo({ isLogin: true })
+        dispatch.globalData.dispatchSetGlobalInfo({ isLogin: true })
         redirectTo({ url: '/pages/trending/index-hook' })
       }
     },
     handleLogin (dispatch) {
-      dispatch.dispatchSetGlobalInfo({ isLogin: true })
+      dispatch.globalData.dispatchSetGlobalInfo({ isLogin: true })
       setStorageSync('isLogin', true)
       redirectTo({ url: '/pages/trending/index-hook' })
     },
@@ -36,7 +36,6 @@ const init = {
 export default function Index () {
   const [state, events, loading] = usePage(init)
   const dispatch = useDispatch()
-
   useDidShow(() => {
     events.initData(dispatch)
   })
