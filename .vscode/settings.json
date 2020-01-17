@@ -45,5 +45,8 @@
   },
   "cSpell.ignoreWords": [
     "reponame"
-  ]
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }
